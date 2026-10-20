@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Choose an integration to update",
-        "description": "Choose a custom integration that is already installed under custom_components. That install can come from HACS or be copied in manually.",
+        "description": "Choose a custom integration that is already installed under custom_components. It can come from HACS or be copied in manually. Component Update does not list its own folder.",
         "data": {
           "folder": "Integration folder"
         }
@@ -24,7 +24,7 @@
       },
       "schedule": {
         "title": "Update schedule",
-        "description": "Component Update will check `{repo}`. Manual mode only reports an update. Automatic mode downloads it on the schedule below. Home Assistant still needs a restart after an install.",
+        "description": "`{repo}` is checked on the schedule below. Manual mode reports an update and waits. Automatic mode downloads it. Home Assistant still needs a restart after an install.",
         "data": {
           "update_mode": "When an update is found",
           "check_interval": "How often to check"
@@ -134,7 +134,7 @@
   "services": {
     "check_updates": {
       "name": "Check for updates",
-      "description": "Check configured GitHub repositories now.",
+      "description": "Check the GitHub repositories configured in Component Update.",
       "fields": {
         "folder": {
           "name": "Folder",
@@ -144,7 +144,7 @@
     },
     "install_update": {
       "name": "Install update",
-      "description": "Download and install the latest commit for one configured integration.",
+      "description": "Download the latest commit for one folder and clear Updates paused.",
       "fields": {
         "folder": {
           "name": "Folder",
@@ -154,7 +154,7 @@
     },
     "rollback": {
       "name": "Roll back",
-      "description": "Install an older tag or commit for one configured integration and pause updates.",
+      "description": "Install a tag or commit for one folder and turn Updates paused on.",
       "fields": {
         "folder": {
           "name": "Folder",
