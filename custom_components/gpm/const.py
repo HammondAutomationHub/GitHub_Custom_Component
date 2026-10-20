@@ -38,7 +38,7 @@ SERVICE_INSTALL = "install_update"
 SERVICE_ROLLBACK = "rollback"
 
 CONF_VERSION = "version"
-VERSION_PROMPT = "Choose a version"
+VERSION_PROMPT = "Choose a version to roll back"
 HISTORY_LIMIT = 15
 
 DEFAULT_BRANCH = "main"

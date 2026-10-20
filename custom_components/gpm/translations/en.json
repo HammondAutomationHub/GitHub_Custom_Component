@@ -107,17 +107,17 @@
         "name": "Reinstall"
       },
       "install_version": {
-        "name": "Install version"
+        "name": "Install version and pause"
       }
     },
     "select": {
       "version": {
-        "name": "Version"
+        "name": "Rollback version"
       }
     },
     "switch": {
       "pause": {
-        "name": "Pause updates"
+        "name": "Updates paused"
       }
     }
   },
@@ -125,6 +125,10 @@
     "restart_required": {
       "title": "Restart required to finish the GPM update",
       "description": "GPM updated `{name}`. Restart Home Assistant to load the new code."
+    },
+    "rollback_paused": {
+      "title": "Rolled back and updates are paused",
+      "description": "GPM installed an older version of `{name}` and paused updates. This folder stays on that version until you turn off Updates paused or install the latest version. Restart Home Assistant to load the new code."
     }
   },
   "services": {

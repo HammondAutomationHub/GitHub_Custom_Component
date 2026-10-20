@@ -36,6 +36,18 @@ class GPMPauseSwitch(GPMEntity, SwitchEntity):
     def is_on(self) -> bool:
         return self.coordinator.paused
 
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        """Say what the switch is doing right now."""
+
+        if self.coordinator.paused:
+            effect = (
+                "Updates are paused. This folder stays on the installed version."
+            )
+        else:
+            effect = "Updates are not paused. Checks can follow the branch."
+        return {"effect": effect}
+
     async def async_turn_on(self, **kwargs: object) -> None:
         """Pause updates without changing the installed files."""
 

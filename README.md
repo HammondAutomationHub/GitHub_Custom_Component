@@ -102,20 +102,20 @@ GPM adds one device per folder:
 
 | Entity | What it does |
 | --- | --- |
-| Update | Shows the installed and remote versions. **Install** downloads the current remote commit and turns **Pause updates** off. |
+| Update | Shows the installed and remote versions. After a rollback its title says updates are paused. **Install** downloads the current remote commit and turns **Updates paused** off. |
 | Check for updates | Checks GitHub now. |
-| Version | Lists tags and recent commits. Choosing one does not install it. |
-| Install version | Installs the chosen version. If it is not the latest commit, **Pause updates** turns on. |
+| Rollback version | Lists tags and recent commits. The dropdown starts at “Choose a version to roll back”. Choosing one does not install it. |
+| Install version and pause | Installs the chosen version and pauses updates on that revision. |
 | Reinstall | Downloads the installed revision again while updates are paused. Otherwise downloads the remote commit, even when the versions already match. |
-| Pause updates | On after a rollback. While it is on, automatic mode leaves the folder where it is. Turn it off to let the next check follow the branch again. |
+| Updates paused | Turns on automatically after a rollback. While it is on, automatic mode leaves the folder on the installed version. Turn it off to let the next check follow the branch again. |
 
 The Update entity's release notes are the remote commit message, and the release URL opens that commit on GitHub.
 
 ## Roll back
 
-On the GPM device, open **Version** and choose a tag or a recent commit, then press **Install version**. GPM replaces the folder in `custom_components` with that revision and turns **Pause updates** on, so automatic mode will not move the folder forward. Turn **Pause updates** off when you want the next check to follow the branch again, or press **Install** on the Update entity to move to the latest commit and clear the pause.
+On the GPM device, open **Rollback version** and choose a tag or a recent commit, then press **Install version and pause**. GPM replaces the folder in `custom_components` with that revision and turns **Updates paused** on. The Update entity title, the repair item, and the **Updates paused** switch all say that updates are paused. Turn **Updates paused** off when you want the next check to follow the branch again, or press **Install** on the Update entity to move to the latest commit and clear the pause.
 
-You can also turn **Pause updates** on without rolling back. That holds the folder on whatever is installed now.
+You can also turn **Updates paused** on without rolling back. That holds the folder on whatever is installed now. The switch state says whether updates are paused.
 
 You can also call the `gpm.rollback` service with `folder` and `version`. `version` is a tag name, such as `v1.2.0`, or a commit SHA.
 

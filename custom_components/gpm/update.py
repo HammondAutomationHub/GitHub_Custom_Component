@@ -58,6 +58,14 @@ class GPMUpdateEntity(GPMEntity, UpdateEntity):
         )
 
     @property
+    def title(self) -> str | None:
+        """Show the pause on the update card after a rollback."""
+
+        if self.coordinator.paused:
+            return "Updates are paused on the installed version"
+        return None
+
+    @property
     def in_progress(self) -> bool:
         return self.coordinator.installing
 
@@ -75,7 +83,17 @@ class GPMUpdateEntity(GPMEntity, UpdateEntity):
     def release_notes(self) -> str | None:
         if self.coordinator.data is None:
             return None
-        return self.coordinator.data.commit_message or None
+        message = self.coordinator.data.commit_message or None
+        if not self.coordinator.paused:
+            return message
+        paused = (
+            "Updates are paused on the installed version. "
+            "Automatic checks will not replace it. "
+            "Turn off Updates paused, or install the latest version, to follow the branch again."
+        )
+        if message:
+            return f"{paused}\n\n{message}"
+        return paused
 
     async def async_install(self, version: str | None, backup: bool, **kwargs: object) -> None:
         """Download the latest commit over the custom component folder."""

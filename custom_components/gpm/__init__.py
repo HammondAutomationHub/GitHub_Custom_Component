@@ -65,7 +65,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
         matches = await _coordinators(folder)
         if not matches:
             raise ServiceValidationError(f"No GPM entry is configured for {folder}.")
-        await matches[0].async_install_ref(call.data[CONF_VERSION])
+        await matches[0].async_install_ref(call.data[CONF_VERSION], paused=True)
 
     hass.services.async_register(DOMAIN, SERVICE_CHECK, handle_check, schema=CHECK_SCHEMA)
     hass.services.async_register(

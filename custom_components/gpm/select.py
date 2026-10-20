@@ -44,6 +44,18 @@ class GPMVersionSelect(GPMEntity, SelectEntity):
     def current_option(self) -> str:
         return self.coordinator.selected_version_label
 
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        """Explain the result of installing the chosen version."""
+
+        return {
+            "effect": (
+                "Installing the selected version pauses updates. "
+                "The folder stays on that version until Updates paused is turned off "
+                "or the latest version is installed."
+            )
+        }
+
     async def async_select_option(self, option: str) -> None:
         try:
             self.coordinator.select_version(option)

@@ -83,8 +83,18 @@ class GPMInstallVersionButton(GPMEntity, ButtonEntity):
     def available(self) -> bool:
         return self.coordinator.selected_ref is not None and not self.coordinator.installing
 
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        """State the pause that follows this button."""
+
+        return {
+            "effect": (
+                "Installs the rollback version and pauses updates on that revision."
+            )
+        }
+
     async def async_press(self) -> None:
         ref = self.coordinator.selected_ref
         if not ref:
-            raise HomeAssistantError("Choose a version before installing it.")
-        await self.coordinator.async_install_ref(ref)
+            raise HomeAssistantError("Choose a version to roll back before installing it.")
+        await self.coordinator.async_install_ref(ref, paused=True)

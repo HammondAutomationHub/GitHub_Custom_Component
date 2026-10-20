@@ -356,14 +356,15 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                         self.owner, self.repo_name, tip, self.folder
                     )
                     remote_version = tip_manifest.version
+            behind = commit.sha != tip
             if paused is None:
-                paused = commit.sha != tip
+                paused = behind
             self._persisted = persisted_state(
                 bootstrapped=True, installed_sha=commit.sha, paused=paused
             )
             await self._store.async_save(self._persisted)
-            self._notify_restart()
-            if paused:
+            self._notify_restart(paused=paused)
+            if behind:
                 installed_display, latest_display = version_displays(
                     local_version=version,
                     local_sha=commit.sha,
@@ -379,9 +380,9 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                     installed_display=installed_display,
                     latest_display=latest_display,
                     commit_message=forward_message,
-                    update_available=paused,
+                    update_available=behind,
                     local_version=version,
-                    remote_version=remote_version if paused else version,
+                    remote_version=remote_version if behind else version,
                 )
             )
             _LOGGER.info(
@@ -453,7 +454,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             self.entry.data.get(CONF_TOKEN) or "",
         )
 
-    def _notify_restart(self) -> None:
+    def _notify_restart(self, *, paused: bool = False) -> None:
         issue_id = ISSUE_RESTART.format(entry_id=self.entry.entry_id)
         ir.async_create_issue(
             self.hass,
@@ -461,19 +462,30 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             issue_id,
             is_fixable=False,
             severity=ir.IssueSeverity.WARNING,
-            translation_key="restart_required",
+            translation_key="rollback_paused" if paused else "restart_required",
             translation_placeholders={"name": self.folder},
         )
+        if paused:
+            title = "GPM rolled back and paused updates"
+            message = (
+                f"GPM installed the selected version of `{self.folder}` and paused updates. "
+                "This folder stays on the installed version until you turn off "
+                "Updates paused or install the latest version. "
+                "Restart Home Assistant to load the new code."
+            )
+        else:
+            title = "GPM restart required"
+            message = (
+                f"GPM updated `{self.folder}`. Restart Home Assistant to load the new code."
+            )
         if self.hass.services.has_service("persistent_notification", "create"):
             self.hass.async_create_task(
                 self.hass.services.async_call(
                     "persistent_notification",
                     "create",
                     {
-                        "title": "GPM restart required",
-                        "message": (
-                            f"GPM updated `{self.folder}`. Restart Home Assistant to load the new code."
-                        ),
+                        "title": title,
+                        "message": message,
                         "notification_id": NOTIFICATION_RESTART.format(
                             entry_id=self.entry.entry_id
                         ),
