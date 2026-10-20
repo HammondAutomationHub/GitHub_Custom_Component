@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Choose an integration to update",
-        "description": "GPM updates a custom integration that is already installed under custom_components. It does not install a new integration.",
+        "description": "Choose a custom integration that is already installed under custom_components. That install can come from HACS or be copied in manually.",
         "data": {
           "folder": "Integration folder"
         }
@@ -53,7 +53,7 @@
     },
     "abort": {
       "already_configured": "That integration folder is already managed by GPM.",
-      "no_integrations": "No custom integrations were found in custom_components. Install one with HACS or copy it into custom_components first.",
+      "no_integrations": "No custom integrations were found in custom_components. Install one from HACS or copy it in manually first.",
       "reauth_successful": "Token updated.",
       "unknown": "Something went wrong. See the logs."
     }

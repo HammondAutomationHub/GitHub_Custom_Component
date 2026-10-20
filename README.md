@@ -4,13 +4,13 @@ This uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/
 
 The script finds Home Assistant, installs GPM, and writes a `gpm:` block into `configuration.yaml`. This repository keeps that role and adds:
 
-- Install from HACS, then configure everything in the Home Assistant UI
-- Choose which custom integration folder to update (one installed by HACS, or any other folder in `custom_components` with a `manifest.json`)
+- Install GPM from HACS or manually, then configure it in the Home Assistant UI
+- Choose a custom integration that was installed from HACS or copied in manually. It must be a folder in `custom_components` with a `manifest.json`
 - Point that folder at a private GitHub repository
 - Provide a token for that repository
 - Choose manual updates, or an automatic check on a schedule (hourly, every 6 or 12 hours, daily, or weekly)
 
-GPM is installed with HACS. It then updates integrations that are already on disk.
+GPM itself can be installed from HACS or manually. The integrations it updates can also be installed either way. Both end up in `custom_components`.
 
 ## What you can configure
 
@@ -38,7 +38,7 @@ For each integration folder:
 
 HACS needs the files in `custom_components/gpm` on the default branch. This repository is laid out that way.
 
-## Install without HACS
+## Install manually
 
 Copy `custom_components/gpm` into your Home Assistant config directory:
 
@@ -67,7 +67,7 @@ The token is stored in Home Assistant's config entry storage (`.storage/core.con
 
 The config flow has three steps.
 
-1. **Folder.** GPM lists directories in `custom_components` that contain a `manifest.json`. It does not list itself. Install the custom integration with HACS or by copying it in before you add it to GPM.
+1. **Folder.** GPM lists directories in `custom_components` that contain a `manifest.json`. It does not list itself. Install that integration from HACS or copy it in manually before you add it to GPM.
 2. **Repository.** Enter the GitHub URL or `owner/repo`, the branch (default `main`), and the token if the repo is private. GPM checks that the branch exists and that the repo contains this integration. The expected layouts are:
    - `custom_components/<folder>/manifest.json` (the usual HACS layout)
    - `manifest.json` at the repository root, with `domain` equal to the folder name
@@ -105,7 +105,7 @@ Automatic mode checks on the interval you chose (and once at startup after the f
 
 ## Using this with HACS
 
-GPM does not install new integrations and it does not browse the HACS store. HACS (or a manual copy) does the first install. GPM then keeps that folder in sync with a GitHub branch.
+GPM does not install new integrations and it does not browse the HACS store. The first install of each integration is from HACS or a manual copy. GPM then keeps that folder in sync with a GitHub branch.
 
 If HACS is also set to update that same integration, the two will overwrite each other. After GPM owns the updates, ignore that repository in HACS or remove it from HACS. Leaving the files in `custom_components` is enough for GPM.
 

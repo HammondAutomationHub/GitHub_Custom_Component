@@ -1,13 +1,13 @@
 # GPM
 
-Uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/main/install/install.sh) and adds what that script does not configure: HACS install, a UI to pick an already installed custom integration folder, a private GitHub repository and token, and how often to check (manual, hourly, daily, weekly, and similar).
+Uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/main/install/install.sh) and adds what that script does not configure: install from HACS or manually, a UI to pick a custom integration that was installed from HACS or copied in manually, a private GitHub repository and token, and how often to check (manual, hourly, daily, weekly, and similar).
 
 {% if installed %}
 ## Configure
 
 **Settings → Devices & services → Add integration → GPM**
 
-1. Choose the integration folder.
+1. Choose the integration folder. The integration can already be installed from HACS or copied in manually.
 2. Enter the GitHub repository, branch, and a read-only token if the repo is private.
 3. Choose manual or automatic updates, and how often to check.
 
@@ -19,7 +19,7 @@ If HACS also updates that integration, ignore it in HACS so the two do not overw
 {% if not installed %}
 ## Install
 
-Add this repository to HACS as a custom integration, download **GPM**, and restart Home Assistant.
+Install GPM from HACS, or copy `custom_components/gpm` into your config folder manually, then restart Home Assistant.
 
 Repository: `https://github.com/HammondAutomationHub/HomeAssistnat-GPM`
 {% endif %}
