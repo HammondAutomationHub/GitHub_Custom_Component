@@ -9,8 +9,8 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import ComponentUpdateCoordinator
-from .entity import ComponentUpdateEntity
+from .coordinator import GitHubCustomComponentCoordinator
+from .entity import GitHubCustomComponentEntity
 
 
 async def async_setup_entry(
@@ -23,19 +23,19 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         [
-            ComponentUpdateCheckButton(coordinator),
-            ComponentUpdateReinstallButton(coordinator),
-            ComponentUpdateInstallVersionButton(coordinator),
+            GitHubCustomComponentCheckButton(coordinator),
+            GitHubCustomComponentReinstallButton(coordinator),
+            GitHubCustomComponentInstallVersionButton(coordinator),
         ]
     )
 
 
-class ComponentUpdateCheckButton(ComponentUpdateEntity, ButtonEntity):
+class GitHubCustomComponentCheckButton(GitHubCustomComponentEntity, ButtonEntity):
     """Check GitHub now. Available even when the last check failed."""
 
     _attr_translation_key = "check"
 
-    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
+    def __init__(self, coordinator: GitHubCustomComponentCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_check"
 
@@ -47,12 +47,12 @@ class ComponentUpdateCheckButton(ComponentUpdateEntity, ButtonEntity):
         await self.coordinator.async_request_refresh()
 
 
-class ComponentUpdateReinstallButton(ComponentUpdateEntity, ButtonEntity):
+class GitHubCustomComponentReinstallButton(GitHubCustomComponentEntity, ButtonEntity):
     """Reinstall the current remote commit even when versions already match."""
 
     _attr_translation_key = "reinstall"
 
-    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
+    def __init__(self, coordinator: GitHubCustomComponentCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_reinstall"
 
@@ -70,12 +70,12 @@ class ComponentUpdateReinstallButton(ComponentUpdateEntity, ButtonEntity):
         await self.coordinator.async_install(force=True)
 
 
-class ComponentUpdateInstallVersionButton(ComponentUpdateEntity, ButtonEntity):
+class GitHubCustomComponentInstallVersionButton(GitHubCustomComponentEntity, ButtonEntity):
     """Install the tag or commit chosen in the version dropdown."""
 
     _attr_translation_key = "install_version"
 
-    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
+    def __init__(self, coordinator: GitHubCustomComponentCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_install_version"
 

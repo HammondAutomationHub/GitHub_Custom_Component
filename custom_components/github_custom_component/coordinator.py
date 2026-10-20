@@ -30,7 +30,7 @@ from .const import (
     UPDATE_MODE_AUTOMATIC,
     VERSION_PROMPT,
 )
-from .errors import ComponentUpdateError, InvalidAuth
+from .errors import GitHubCustomComponentError, InvalidAuth
 from .github_client import GitHubClient
 from .history import HistoryRef
 from .installer import install_archive, read_local_version
@@ -47,7 +47,7 @@ from .updater import (
 _LOGGER = logging.getLogger(__name__)
 
 
-class ComponentUpdateStatus:
+class GitHubCustomComponentStatus:
     """State exposed to entities."""
 
     def __init__(
@@ -72,7 +72,7 @@ class ComponentUpdateStatus:
         self.remote_version = remote_version
 
 
-class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
+class GitHubCustomComponentCoordinator(DataUpdateCoordinator[GitHubCustomComponentStatus]):
     """Check one custom component folder against one GitHub repository."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -208,7 +208,7 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             await self._store.async_save(self._persisted)
             self._notify_restart()
             self.async_set_updated_data(
-                ComponentUpdateStatus(
+                GitHubCustomComponentStatus(
                     installed_sha=status.remote_sha,
                     remote_sha=status.remote_sha,
                     installed_display=installed,
@@ -243,16 +243,16 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             paused=self.paused,
         )
 
-    async def _async_update_data(self) -> ComponentUpdateStatus:
+    async def _async_update_data(self) -> GitHubCustomComponentStatus:
         async with self._io:
             try:
                 return await self._fetch_status(apply_policy=True)
             except InvalidAuth as err:
                 raise ConfigEntryAuthFailed(str(err)) from err
-            except ComponentUpdateError as err:
+            except GitHubCustomComponentError as err:
                 raise UpdateFailed(str(err)) from err
 
-    async def _fetch_status(self, *, apply_policy: bool) -> ComponentUpdateStatus:
+    async def _fetch_status(self, *, apply_policy: bool) -> GitHubCustomComponentStatus:
         local_version = await self.hass.async_add_executor_job(
             read_local_version, Path(self.hass.config.config_dir), self.folder
         )
@@ -299,7 +299,7 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             await self._store.async_save(self._persisted)
             self._notify_restart()
             installed, latest = in_sync_displays(version)
-            return ComponentUpdateStatus(
+            return GitHubCustomComponentStatus(
                 installed_sha=evaluation.remote_sha,
                 remote_sha=evaluation.remote_sha,
                 installed_display=installed,
@@ -374,7 +374,7 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             else:
                 installed_display, latest_display = in_sync_displays(version)
             self.async_set_updated_data(
-                ComponentUpdateStatus(
+                GitHubCustomComponentStatus(
                     installed_sha=commit.sha,
                     remote_sha=tip,
                     installed_display=installed_display,
@@ -403,7 +403,7 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             self._history = await self._client().list_history(
                 self.owner, self.repo_name, self.branch
             )
-        except ComponentUpdateError:
+        except GitHubCustomComponentError:
             _LOGGER.debug("Could not list versions for %s", self.folder, exc_info=True)
             self._history = []
         self._keep_selection()
@@ -419,8 +419,8 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             return
         self._selected_label = match.label
 
-    def _status_from(self, evaluation: Evaluation, *, installed_sha: str | None) -> ComponentUpdateStatus:
-        return ComponentUpdateStatus(
+    def _status_from(self, evaluation: Evaluation, *, installed_sha: str | None) -> GitHubCustomComponentStatus:
+        return GitHubCustomComponentStatus(
             installed_sha=installed_sha,
             remote_sha=evaluation.remote_sha,
             installed_display=evaluation.installed_display,
@@ -433,7 +433,7 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
 
     async def _apply(self, sha: str) -> str:
         def _prepare() -> Path:
-            return Path(tempfile.mkdtemp(prefix="component-update-download-"))
+            return Path(tempfile.mkdtemp(prefix="github-custom-component-download-"))
 
         temp_dir = await self.hass.async_add_executor_job(_prepare)
         zip_path = temp_dir / "repo.zip"
@@ -466,17 +466,17 @@ class ComponentUpdateCoordinator(DataUpdateCoordinator[ComponentUpdateStatus]):
             translation_placeholders={"name": self.folder},
         )
         if paused:
-            title = "Component Update rolled back and paused updates"
+            title = "GitHub - Custom_Component rolled back and paused updates"
             message = (
-                f"Component Update installed the selected version of `{self.folder}` and paused updates. "
+                f"GitHub - Custom_Component installed the selected version of `{self.folder}` and paused updates. "
                 "This folder stays on the installed version until you turn off "
                 "Updates paused or install the latest version. "
                 "Restart Home Assistant to load the new code."
             )
         else:
-            title = "Component Update restart required"
+            title = "GitHub - Custom_Component restart required"
             message = (
-                f"Component Update wrote a new version of `{self.folder}`. Restart Home Assistant to load the new code."
+                f"GitHub - Custom_Component wrote a new version of `{self.folder}`. Restart Home Assistant to load the new code."
             )
         if self.hass.services.has_service("persistent_notification", "create"):
             self.hass.async_create_task(

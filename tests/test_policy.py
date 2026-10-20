@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from custom_components.component_update.policy import decide_check
+from custom_components.github_custom_component.policy import decide_check
 
 REMOTE = "b" * 40
 

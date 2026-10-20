@@ -1,0 +1,12 @@
+{
+  "domain": "github_custom_component",
+  "name": "GitHub - Custom_Component",
+  "codeowners": ["@HammondAutomationHub"],
+  "config_flow": true,
+  "documentation": "https://github.com/HammondAutomationHub/GitHub_Custom_Component",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/HammondAutomationHub/GitHub_Custom_Component/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

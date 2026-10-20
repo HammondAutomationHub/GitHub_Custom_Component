@@ -43,7 +43,7 @@ class RepoMeta:
 
 @dataclass(frozen=True)
 class CommitInfo:
-    """A commit Component Update can install."""
+    """A commit GitHub - Custom_Component can install."""
 
     sha: str
     message: str

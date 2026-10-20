@@ -1,4 +1,4 @@
-"""Update entity for a custom integration tracked by Component Update."""
+"""Update entity for a custom integration tracked by GitHub - Custom_Component."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, UPDATE_MODE_AUTOMATIC
-from .coordinator import ComponentUpdateCoordinator
-from .entity import ComponentUpdateEntity
+from .coordinator import GitHubCustomComponentCoordinator
+from .entity import GitHubCustomComponentEntity
 
 
 async def async_setup_entry(
@@ -22,7 +22,7 @@ async def async_setup_entry(
     async_add_entities([ComponentRepositoryUpdateEntity(hass.data[DOMAIN][entry.entry_id])])
 
 
-class ComponentRepositoryUpdateEntity(ComponentUpdateEntity, UpdateEntity):
+class ComponentRepositoryUpdateEntity(GitHubCustomComponentEntity, UpdateEntity):
     """Show the installed and remote versions and install on request."""
 
     _attr_translation_key = "repository"
@@ -32,7 +32,7 @@ class ComponentRepositoryUpdateEntity(ComponentUpdateEntity, UpdateEntity):
         | UpdateEntityFeature.RELEASE_NOTES
     )
 
-    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
+    def __init__(self, coordinator: GitHubCustomComponentCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_update"
 

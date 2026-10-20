@@ -1,4 +1,4 @@
-"""Component Update keeps installed custom integrations current."""
+"""GitHub - Custom_Component keeps installed custom integrations current."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from .const import (
     SERVICE_INSTALL,
     SERVICE_ROLLBACK,
 )
-from .coordinator import ComponentUpdateCoordinator
+from .coordinator import GitHubCustomComponentCoordinator
 
 PLATFORMS: list[Platform] = [
     Platform.UPDATE,
@@ -42,7 +42,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     hass.data.setdefault(DOMAIN, {})
 
-    async def _coordinators(folder: str | None) -> list[ComponentUpdateCoordinator]:
+    async def _coordinators(folder: str | None) -> list[GitHubCustomComponentCoordinator]:
         coordinators = list(hass.data[DOMAIN].values())
         if not folder:
             return coordinators
@@ -57,14 +57,14 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
         folder = call.data[CONF_FOLDER]
         matches = await _coordinators(folder)
         if not matches:
-            raise ServiceValidationError(f"No Component Update entry is configured for {folder}.")
+            raise ServiceValidationError(f"No GitHub - Custom_Component entry is configured for {folder}.")
         await matches[0].async_install()
 
     async def handle_rollback(call: ServiceCall) -> None:
         folder = call.data[CONF_FOLDER]
         matches = await _coordinators(folder)
         if not matches:
-            raise ServiceValidationError(f"No Component Update entry is configured for {folder}.")
+            raise ServiceValidationError(f"No GitHub - Custom_Component entry is configured for {folder}.")
         await matches[0].async_install_ref(call.data[CONF_VERSION], paused=True)
 
     hass.services.async_register(DOMAIN, SERVICE_CHECK, handle_check, schema=CHECK_SCHEMA)
@@ -80,7 +80,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up one folder-to-repository mapping."""
 
-    coordinator = ComponentUpdateCoordinator(hass, entry)
+    coordinator = GitHubCustomComponentCoordinator(hass, entry)
     await coordinator.async_load()
     coordinator.clear_restart_notice()
     await coordinator.async_config_entry_first_refresh()
@@ -91,7 +91,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a Component Update entry."""
+    """Unload a GitHub - Custom_Component entry."""
 
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:

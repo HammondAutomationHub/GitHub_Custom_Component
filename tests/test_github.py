@@ -11,8 +11,8 @@ import aiohttp
 from aiohttp import web
 import pytest
 
-from custom_components.component_update.const import UPDATE_MODE_AUTOMATIC, UPDATE_MODE_MANUAL
-from custom_components.component_update.errors import (
+from custom_components.github_custom_component.const import UPDATE_MODE_AUTOMATIC, UPDATE_MODE_MANUAL
+from custom_components.github_custom_component.errors import (
     ArchiveError,
     BranchNotFound,
     InvalidAuth,
@@ -20,10 +20,10 @@ from custom_components.component_update.errors import (
     RateLimited,
     RepoNotFound,
 )
-from custom_components.component_update.github_client import GitHubClient
-from custom_components.component_update.installer import install_archive
-from custom_components.component_update.updater import evaluate_update
-from custom_components.component_update.validate import validate_repository
+from custom_components.github_custom_component.github_client import GitHubClient
+from custom_components.github_custom_component.installer import install_archive
+from custom_components.github_custom_component.updater import evaluate_update
+from custom_components.github_custom_component.validate import validate_repository
 
 TOKEN = "ghp_test_token_do_not_log"
 
@@ -172,7 +172,7 @@ async def test_missing_branch_is_reported(github) -> None:
 async def test_validate_repository_against_the_fake_api(github, monkeypatch) -> None:
     state, base = github
     monkeypatch.setattr(
-        "custom_components.component_update.validate.GitHubClient",
+        "custom_components.github_custom_component.validate.GitHubClient",
         lambda session, token: GitHubClient(session, token, api_base=base),
     )
     async with open_session() as session:

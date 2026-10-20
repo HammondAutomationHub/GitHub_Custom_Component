@@ -1,10 +1,10 @@
-# Component Update
+# GitHub - Custom_Component
 
-Component Update keeps a custom integration that is already installed under `custom_components` in step with a GitHub repository.
+GitHub - Custom_Component keeps a custom integration that is already installed under `custom_components` in step with a GitHub repository.
 
 You choose the folder, the repository and branch, and whether updates are manual or automatic. Private repositories use a read-only token. Rolling back to an older tag or commit pauses updates on that revision until you resume them.
 
-Component Update and the integrations it updates can each be installed from HACS or copied in manually. Both end up in `custom_components`. Component Update then manages only the folders you add.
+GitHub - Custom_Component and the integrations it updates can each be installed from HACS or copied in manually. Both end up in `custom_components`. GitHub - Custom_Component then manages only the folders you add.
 
 ## What you configure
 
@@ -23,22 +23,22 @@ Each folder gets its own entry:
 2. Open the top-right menu and choose **Custom repositories**.
 3. Add this repository as an **Integration**:
 
-   `https://github.com/HammondAutomationHub/HomeAssistant_ComponentUpdate`
-4. In the HACS integrations list, find **Component Update** and download it.
+   `https://github.com/HammondAutomationHub/GitHub_Custom_Component`
+4. In the HACS integrations list, find **GitHub - Custom_Component** and download it.
 5. Restart Home Assistant.
-6. Go to **Settings → Devices & services → Add integration** and choose **Component Update**.
+6. Go to **Settings → Devices & services → Add integration** and choose **GitHub - Custom_Component**.
 
-HACS reads `custom_components/component_update` from the default branch. This repository is laid out that way.
+HACS reads `custom_components/github_custom_component` from the default branch. This repository is laid out that way.
 
 ## Install manually
 
-Copy `custom_components/component_update` into your Home Assistant config directory:
+Copy `custom_components/github_custom_component` into your Home Assistant config directory:
 
 ```text
-<config>/custom_components/component_update
+<config>/custom_components/github_custom_component
 ```
 
-Restart Home Assistant, then add **Component Update** from **Settings → Devices & services**.
+Restart Home Assistant, then add **GitHub - Custom_Component** from **Settings → Devices & services**.
 
 ## Create a GitHub token
 
@@ -47,11 +47,11 @@ Private repositories need a token. Add one for public repositories too. GitHub a
 Use a fine-grained personal access token:
 
 1. On GitHub, open **Settings → Developer settings → Personal access tokens → Fine-grained tokens**.
-2. Give it access only to the repositories Component Update should read.
+2. Give it access only to the repositories GitHub - Custom_Component should read.
 3. Under **Repository permissions**, set **Contents** to **Read-only**.
 4. Generate the token and paste it into the token field.
 
-Leave the token out of the repository URL. Component Update rejects URLs that contain credentials.
+Leave the token out of the repository URL. GitHub - Custom_Component rejects URLs that contain credentials.
 
 Home Assistant stores the token in `.storage/core.config_entries`, the same place it stores other integration secrets. Use a read-only token and protect backups of the config directory.
 
@@ -59,8 +59,8 @@ Home Assistant stores the token in `.storage/core.config_entries`, the same plac
 
 The setup dialog has three steps.
 
-1. **Folder.** The list is every `custom_components` directory that has a `manifest.json`, except Component Update itself. Install that integration from HACS or copy it in manually before adding it here.
-2. **Repository.** Enter the GitHub URL or `owner/repo`, the branch (default `main`), and the token when the repository is private. Component Update checks that the branch exists and that the repository contains this integration. Either layout works:
+1. **Folder.** The list is every `custom_components` directory that has a `manifest.json`, except GitHub - Custom_Component itself. Install that integration from HACS or copy it in manually before adding it here.
+2. **Repository.** Enter the GitHub URL or `owner/repo`, the branch (default `main`), and the token when the repository is private. GitHub - Custom_Component checks that the branch exists and that the repository contains this integration. Either layout works:
    - `custom_components/<folder>/manifest.json`, the usual HACS layout
    - `manifest.json` at the repository root, with `domain` equal to the folder name
 3. **Schedule.**
@@ -76,7 +76,7 @@ Each folder can be configured once.
 
 ## Devices
 
-Component Update adds one device per folder.
+GitHub - Custom_Component adds one device per folder.
 
 | Entity | What it does |
 | --- | --- |
@@ -93,7 +93,7 @@ Open either **Rollback version** or **Install version and pause** to read that i
 
 ## Roll back
 
-On the device, open **Rollback version**, choose a tag or a recent commit, then press **Install version and pause**. Component Update replaces `custom_components/<folder>` with that revision and turns **Updates paused** on. The update card, the **Updates paused** switch, and a repair item all say the folder is held on that revision.
+On the device, open **Rollback version**, choose a tag or a recent commit, then press **Install version and pause**. GitHub - Custom_Component replaces `custom_components/<folder>` with that revision and turns **Updates paused** on. The update card, the **Updates paused** switch, and a repair item all say the folder is held on that revision.
 
 Turn **Updates paused** off when the next check should follow the branch again. **Install** on the Update entity moves to the latest commit and clears the pause. You can also turn **Updates paused** on without rolling back, which holds whatever is installed now.
 
@@ -103,33 +103,33 @@ The version list shows up to 15 tags, then recent commits on the configured bran
 
 ## Services
 
-- `component_update.check_updates` — optional `folder`. Omit it to check every entry.
-- `component_update.install_update` — `folder` is required. Installs the latest commit and clears a pause.
-- `component_update.rollback` — `folder` and `version` are required. `version` is a tag name, such as `v1.2.0`, or a commit SHA. The install pauses updates.
+- `github_custom_component.check_updates` — optional `folder`. Omit it to check every entry.
+- `github_custom_component.install_update` — `folder` is required. Installs the latest commit and clears a pause.
+- `github_custom_component.rollback` — `folder` and `version` are required. `version` is a tag name, such as `v1.2.0`, or a commit SHA. The install pauses updates.
 
 Manual mode checks once when Home Assistant starts, so the Update entity has a version to show, and again when you press **Check for updates** or call the service. Automatic mode checks on the interval you chose, including once at startup after the first check. A download raises the repair **Restart required to finish the update**.
 
 ## Using this with HACS
 
-The first install of each integration is yours: HACS, or a copy into `custom_components`. Component Update then keeps that folder in step with the GitHub branch you named.
+The first install of each integration is yours: HACS, or a copy into `custom_components`. GitHub - Custom_Component then keeps that folder in step with the GitHub branch you named.
 
-When HACS is also set to update that same integration, the two overwrite each other. After Component Update owns the folder, ignore that repository in HACS or remove it from HACS. Leave the files in `custom_components`.
+When HACS is also set to update that same integration, the two overwrite each other. After GitHub - Custom_Component owns the folder, ignore that repository in HACS or remove it from HACS. Leave the files in `custom_components`.
 
-Component Update follows the branch. A GitHub Release is installed when that branch contains the release commit.
+GitHub - Custom_Component follows the branch. A GitHub Release is installed when that branch contains the release commit.
 
 ## FAQ
 
 ### I started with a public GitHub repository and want to make it private
 
-Leave the folder in `custom_components/<folder>`. Component Update takes over updates after the GitHub repository is private.
+Leave the folder in `custom_components/<folder>`. GitHub - Custom_Component takes over updates after the GitHub repository is private.
 
 1. Leave the installed folder where it is.
 2. On GitHub, change that repository from public to private.
 3. Create a fine-grained token that can read the private repository. Set **Contents** to **Read-only**.
-4. Add Component Update, choose that folder, enter the repository and branch, and paste the token.
+4. Add GitHub - Custom_Component, choose that folder, enter the repository and branch, and paste the token.
 5. If HACS was updating the public repository, ignore or remove it in HACS. HACS can no longer read a private repository it is not allowed to see, and both updaters would write the same folder.
 
-You change the repository's visibility on GitHub. The first check does not reinstall when the local version already matches. Later commits on the private repository are what Component Update offers to install.
+You change the repository's visibility on GitHub. The first check does not reinstall when the local version already matches. Later commits on the private repository are what GitHub - Custom_Component offers to install.
 
 ## Troubleshooting
 
@@ -142,14 +142,14 @@ You change the repository's visibility on GitHub. The first check does not reins
 | Could not find manifest.json | The repository needs `custom_components/<folder>/manifest.json`, or a root `manifest.json` whose `domain` is the folder name. |
 | Manifest domain does not match | The folder name and the manifest `domain` must be the same. |
 | Rate limit reached | Add a token, or check less often than hourly. |
-| Restart required | Restart Home Assistant after Component Update writes new component files. |
+| Restart required | Restart Home Assistant after GitHub - Custom_Component writes new component files. |
 
 Debug logs:
 
 ```yaml
 logger:
   logs:
-    custom_components.component_update: debug
+    custom_components.github_custom_component: debug
 ```
 
 The token is never written to the log.
@@ -171,7 +171,7 @@ The tests cover repository parsing, the manual and automatic decision, archive i
 ## Limits
 
 - GitHub.com only. GitHub Enterprise Server is not supported.
-- Component Update will not update its own folder.
+- GitHub - Custom_Component will not update its own folder.
 - An update copies the integration files into place. The integration's own migrations run when Home Assistant starts.
 - A bad commit on the tracked branch can break the next restart. Use manual mode for integrations you depend on, and keep Home Assistant backups.
 - An automatic install still needs a restart before the new code runs.

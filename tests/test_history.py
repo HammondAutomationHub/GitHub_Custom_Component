@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from custom_components.component_update.history import build_history
+from custom_components.github_custom_component.history import build_history
 
 
 def test_tags_are_listed_before_other_commits() -> None:

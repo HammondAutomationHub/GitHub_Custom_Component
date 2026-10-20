@@ -9,8 +9,8 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import ComponentUpdateCoordinator
-from .entity import ComponentUpdateEntity
+from .coordinator import GitHubCustomComponentCoordinator
+from .entity import GitHubCustomComponentEntity
 
 
 async def async_setup_entry(
@@ -20,15 +20,15 @@ async def async_setup_entry(
 ) -> None:
     """Create the version selector."""
 
-    async_add_entities([ComponentUpdateVersionSelect(hass.data[DOMAIN][entry.entry_id])])
+    async_add_entities([GitHubCustomComponentVersionSelect(hass.data[DOMAIN][entry.entry_id])])
 
 
-class ComponentUpdateVersionSelect(ComponentUpdateEntity, SelectEntity):
+class GitHubCustomComponentVersionSelect(GitHubCustomComponentEntity, SelectEntity):
     """Pick a tag or recent commit. Installing it is a separate button."""
 
     _attr_translation_key = "version"
 
-    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
+    def __init__(self, coordinator: GitHubCustomComponentCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_version"
 

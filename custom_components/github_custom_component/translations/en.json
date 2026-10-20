@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Choose an integration to update",
-        "description": "Choose a custom integration that is already installed under custom_components. It can come from HACS or be copied in manually. Component Update does not list its own folder.",
+        "description": "Choose a custom integration that is already installed under custom_components. It can come from HACS or be copied in manually. GitHub - Custom_Component does not list its own folder.",
         "data": {
           "folder": "Integration folder"
         }
@@ -18,7 +18,7 @@
         },
         "data_description": {
           "repo": "Example: https://github.com/owner/repo or owner/repo",
-          "branch": "Branch Component Update should follow. The default is main.",
+          "branch": "Branch GitHub - Custom_Component should follow. The default is main.",
           "token": "Fine-grained personal access token with Contents set to Read-only. Leave empty for a public repository."
         }
       },
@@ -52,7 +52,7 @@
       "unknown": "Something went wrong. See the logs."
     },
     "abort": {
-      "already_configured": "That integration folder is already managed by Component Update.",
+      "already_configured": "That integration folder is already managed by GitHub - Custom_Component.",
       "no_integrations": "No custom integrations were found in custom_components. Install one from HACS or copy it in manually first.",
       "reauth_successful": "Token updated.",
       "unknown": "Something went wrong. See the logs."
@@ -61,7 +61,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Component Update options",
+        "title": "GitHub - Custom_Component options",
         "description": "Updating `{folder}` from `{repo}`. Leave the token empty to keep the token that is already saved.",
         "data": {
           "branch": "Branch",
@@ -124,21 +124,21 @@
   "issues": {
     "restart_required": {
       "title": "Restart required to finish the update",
-      "description": "Component Update wrote a new version of `{name}`. Restart Home Assistant to load the new code."
+      "description": "GitHub - Custom_Component wrote a new version of `{name}`. Restart Home Assistant to load the new code."
     },
     "rollback_paused": {
       "title": "Rolled back and updates are paused",
-      "description": "Component Update installed an older version of `{name}` and paused updates. This folder stays on that version until you turn off Updates paused or install the latest version. Restart Home Assistant to load the new code."
+      "description": "GitHub - Custom_Component installed an older version of `{name}` and paused updates. This folder stays on that version until you turn off Updates paused or install the latest version. Restart Home Assistant to load the new code."
     }
   },
   "services": {
     "check_updates": {
       "name": "Check for updates",
-      "description": "Check the GitHub repositories configured in Component Update.",
+      "description": "Check the GitHub repositories configured in GitHub - Custom_Component.",
       "fields": {
         "folder": {
           "name": "Folder",
-          "description": "Integration folder to check. Leave empty to check every Component Update entry."
+          "description": "Integration folder to check. Leave empty to check every GitHub - Custom_Component entry."
         }
       }
     },
@@ -148,7 +148,7 @@
       "fields": {
         "folder": {
           "name": "Folder",
-          "description": "Integration folder configured in Component Update."
+          "description": "Integration folder configured in GitHub - Custom_Component."
         }
       }
     },
@@ -158,7 +158,7 @@
       "fields": {
         "folder": {
           "name": "Folder",
-          "description": "Integration folder configured in Component Update."
+          "description": "Integration folder configured in GitHub - Custom_Component."
         },
         "version": {
           "name": "Version",

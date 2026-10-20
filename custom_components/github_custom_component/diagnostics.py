@@ -6,16 +6,16 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_CHECK_INTERVAL, CONF_UPDATE_MODE, DOMAIN
-from .coordinator import ComponentUpdateCoordinator
+from .coordinator import GitHubCustomComponentCoordinator
 from .repo import redact_config
 
 
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> dict:
-    """Return diagnostics for one Component Update entry."""
+    """Return diagnostics for one GitHub - Custom_Component entry."""
 
-    coordinator: ComponentUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: GitHubCustomComponentCoordinator = hass.data[DOMAIN][entry.entry_id]
     status = coordinator.data
     return {
         "config": redact_config(dict(entry.data)),

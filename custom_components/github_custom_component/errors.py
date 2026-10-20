@@ -1,69 +1,69 @@
-"""Errors raised by Component Update. Messages never include tokens or credentials."""
+"""Errors raised by GitHub - Custom_Component. Messages never include tokens or credentials."""
 
 from __future__ import annotations
 
 
-class ComponentUpdateError(Exception):
+class GitHubCustomComponentError(Exception):
     """Base error with a config-flow error code."""
 
     code = "unknown"
 
 
-class InvalidUrl(ComponentUpdateError):
+class InvalidUrl(GitHubCustomComponentError):
     """Repository URL could not be parsed."""
 
     code = "invalid_url"
 
 
-class InvalidAuth(ComponentUpdateError):
+class InvalidAuth(GitHubCustomComponentError):
     """GitHub rejected the token or the token cannot read the repo."""
 
     code = "invalid_auth"
 
 
-class RepoNotFound(ComponentUpdateError):
+class RepoNotFound(GitHubCustomComponentError):
     """Repository does not exist or the token cannot see it."""
 
     code = "repo_not_found"
 
 
-class BranchNotFound(ComponentUpdateError):
+class BranchNotFound(GitHubCustomComponentError):
     """Branch or ref does not exist."""
 
     code = "branch_not_found"
 
 
-class ManifestNotFound(ComponentUpdateError):
+class ManifestNotFound(GitHubCustomComponentError):
     """custom component manifest.json was not in the repository."""
 
     code = "manifest_not_found"
 
 
-class ManifestMismatch(ComponentUpdateError):
+class ManifestMismatch(GitHubCustomComponentError):
     """manifest.json domain does not match the selected folder."""
 
     code = "manifest_mismatch"
 
 
-class RateLimited(ComponentUpdateError):
+class RateLimited(GitHubCustomComponentError):
     """GitHub API rate limit was reached."""
 
     code = "rate_limited"
 
 
-class CannotConnect(ComponentUpdateError):
+class CannotConnect(GitHubCustomComponentError):
     """GitHub could not be reached or returned an unexpected error."""
 
     code = "cannot_connect"
 
 
-class ArchiveError(ComponentUpdateError):
+class ArchiveError(GitHubCustomComponentError):
     """Downloaded archive was unsafe or not a valid component."""
 
     code = "archive_invalid"
 
 
-class InvalidSchedule(ComponentUpdateError):
+class InvalidSchedule(GitHubCustomComponentError):
     """Automatic mode requires a periodic check interval."""
 
     code = "automatic_needs_interval"
