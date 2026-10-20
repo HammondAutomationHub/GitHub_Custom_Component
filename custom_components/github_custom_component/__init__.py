@@ -25,6 +25,7 @@ PLATFORMS: list[Platform] = [
     Platform.BUTTON,
     Platform.SELECT,
     Platform.SWITCH,
+    Platform.SENSOR,
 ]
 
 CHECK_SCHEMA = vol.Schema({vol.Optional(CONF_FOLDER): cv.string})

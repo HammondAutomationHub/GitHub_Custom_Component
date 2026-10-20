@@ -25,6 +25,11 @@
       "pause": {
         "default": "mdi:pause"
       }
+    },
+    "sensor": {
+      "status": {
+        "default": "mdi:information-outline"
+      }
     }
   }
 }

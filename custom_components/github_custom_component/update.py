@@ -57,6 +57,19 @@ class ComponentRepositoryUpdateEntity(GitHubCustomComponentEntity, UpdateEntity)
             f"{self.coordinator.data.remote_sha}"
         )
 
+    def version_is_newer(self, latest_version: str, installed_version: str) -> bool:
+        """Use the coordinator decision so a new commit is shown even when the manifest version stays the same."""
+
+        if self.coordinator.data is not None:
+            return self.coordinator.data.update_available
+        return super().version_is_newer(latest_version, installed_version)
+
+    @property
+    def release_summary(self) -> str | None:
+        """Short result shown on the update card."""
+
+        return self.coordinator.status_text()
+
     @property
     def title(self) -> str | None:
         """Show the pause on the update card after a rollback."""

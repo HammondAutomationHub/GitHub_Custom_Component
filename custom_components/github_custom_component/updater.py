@@ -77,6 +77,31 @@ def in_sync_displays(version: str) -> tuple[str, str]:
     return version, version
 
 
+def check_status_text(
+    *,
+    success: bool,
+    error: str | None,
+    installed: str | None,
+    latest: str | None,
+    update_available: bool,
+    paused: bool,
+) -> str:
+    """One line the device page can show after a GitHub check."""
+
+    if not success:
+        detail = error.strip() if error else "GitHub check failed."
+        return f"Check failed: {detail}"
+    if not installed or not latest:
+        return "No check result yet."
+    if paused and update_available:
+        return f"Paused on {installed}. Latest on the branch is {latest}."
+    if paused:
+        return f"Paused on {installed}."
+    if update_available:
+        return f"Update available: {installed} → {latest}."
+    return f"Up to date at {installed}."
+
+
 def status_attributes(
     *,
     folder: str,

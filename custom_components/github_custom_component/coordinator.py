@@ -38,6 +38,7 @@ from .policy import persisted_state
 from .repo import normalize_branch, split_slug
 from .updater import (
     Evaluation,
+    check_status_text,
     evaluate_update,
     in_sync_displays,
     status_attributes,
@@ -229,6 +230,20 @@ class GitHubCustomComponentCoordinator(DataUpdateCoordinator[GitHubCustomCompone
         finally:
             self.installing = False
             self.async_update_listeners()
+
+    def status_text(self) -> str:
+        """Return the sentence shown after the last GitHub check."""
+
+        status = self.data
+        error = str(self.last_exception) if self.last_exception else None
+        return check_status_text(
+            success=self.last_update_success,
+            error=error,
+            installed=status.installed_display if status else None,
+            latest=status.latest_display if status else None,
+            update_available=bool(status and status.update_available),
+            paused=self.paused,
+        )
 
     def attributes(self) -> dict[str, str | None]:
         """Return token-free attributes for the update entity."""

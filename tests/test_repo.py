@@ -17,7 +17,7 @@ from custom_components.github_custom_component.repo import (
     schedule_error,
     version_displays,
 )
-from custom_components.github_custom_component.updater import status_attributes
+from custom_components.github_custom_component.updater import check_status_text, status_attributes
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -113,6 +113,39 @@ def test_redaction_and_attributes_do_not_carry_a_token() -> None:
     stored = persisted_state(bootstrapped=True, installed_sha="abc")
     assert set(stored) == {"bootstrapped", "installed_sha", "paused"}
     assert stored["paused"] is False
+
+
+def test_check_status_text_reports_the_result() -> None:
+    assert (
+        check_status_text(
+            success=True,
+            error=None,
+            installed="1.0.0",
+            latest="1.2.0",
+            update_available=True,
+            paused=False,
+        )
+        == "Update available: 1.0.0 → 1.2.0."
+    )
+    assert (
+        check_status_text(
+            success=True,
+            error=None,
+            installed="1.2.0",
+            latest="1.2.0",
+            update_available=False,
+            paused=False,
+        )
+        == "Up to date at 1.2.0."
+    )
+    assert check_status_text(
+        success=False,
+        error="Could not reach GitHub.",
+        installed=None,
+        latest=None,
+        update_available=False,
+        paused=False,
+    ).startswith("Check failed:")
 
 
 def test_check_intervals_match_the_ui_strings() -> None:

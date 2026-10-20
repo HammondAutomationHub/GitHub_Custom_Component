@@ -43,8 +43,17 @@ class GitHubCustomComponentCheckButton(GitHubCustomComponentEntity, ButtonEntity
     def available(self) -> bool:
         return True
 
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        """Show the last check result on the button."""
+
+        return {"result": self.coordinator.status_text()}
+
     async def async_press(self) -> None:
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh()
+        if not self.coordinator.last_update_success:
+            error = self.coordinator.last_exception
+            raise HomeAssistantError(str(error) if error else "GitHub check failed.")
 
 
 class GitHubCustomComponentReinstallButton(GitHubCustomComponentEntity, ButtonEntity):

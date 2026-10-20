@@ -119,6 +119,11 @@
       "pause": {
         "name": "Updates paused"
       }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status"
+      }
     }
   },
   "issues": {
