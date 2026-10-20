@@ -25,7 +25,7 @@ def decide_check(
     local_version: str,
     remote_version: str,
     update_mode: str,
-    pinned: bool = False,
+    paused: bool = False,
 ) -> Decision:
     """Decide the outcome of a repository check.
 
@@ -33,7 +33,7 @@ def decide_check(
     matches the remote manifest, that remote commit is recorded as installed
     so an unchanged HACS copy is not flagged as an update.
 
-    A pinned folder stays on the commit the user chose. Automatic mode will
+    A paused folder stays on the commit the user chose. Automatic mode will
     not replace it with the branch tip.
     """
 
@@ -52,18 +52,18 @@ def decide_check(
         bootstrapped=True,
         should_install=update_mode == UPDATE_MODE_AUTOMATIC
         and update_available
-        and not pinned,
+        and not paused,
         update_available=update_available,
     )
 
 
 def persisted_state(
-    *, bootstrapped: bool, installed_sha: str | None, pinned: bool = False
+    *, bootstrapped: bool, installed_sha: str | None, paused: bool = False
 ) -> dict:
     """State written to Home Assistant storage. Tokens are never included."""
 
     return {
         "bootstrapped": bootstrapped,
         "installed_sha": installed_sha,
-        "pinned": pinned,
+        "paused": paused,
     }

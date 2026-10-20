@@ -61,6 +61,12 @@ class GPMReinstallButton(GPMEntity, ButtonEntity):
         return not self.coordinator.installing
 
     async def async_press(self) -> None:
+        installed = (
+            self.coordinator.data.installed_sha if self.coordinator.data is not None else None
+        )
+        if self.coordinator.paused and installed:
+            await self.coordinator.async_install_ref(installed, paused=True)
+            return
         await self.coordinator.async_install(force=True)
 
 

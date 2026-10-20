@@ -39,7 +39,7 @@ async def evaluate_update(
     bootstrapped: bool,
     installed_sha: str | None,
     update_mode: str,
-    pinned: bool = False,
+    paused: bool = False,
 ) -> Evaluation:
     """Fetch the remote commit and manifest, then apply the update policy."""
 
@@ -52,7 +52,7 @@ async def evaluate_update(
         local_version=local_version,
         remote_version=manifest.version,
         update_mode=update_mode,
-        pinned=pinned,
+        paused=paused,
     )
     installed_display, latest_display = version_displays(
         local_version=local_version,
@@ -84,7 +84,7 @@ def status_attributes(
     branch: str,
     installed_sha: str | None,
     remote_sha: str | None,
-    pinned: bool = False,
+    paused: bool = False,
 ) -> dict[str, str | None]:
     """Extra state attributes. These must never include a token."""
 
@@ -94,5 +94,5 @@ def status_attributes(
         "branch": branch,
         "installed_commit": installed_sha,
         "latest_commit": remote_sha,
-        "pinned": "true" if pinned else "false",
+        "paused": "true" if paused else "false",
     }

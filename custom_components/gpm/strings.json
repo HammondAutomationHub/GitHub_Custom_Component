@@ -114,6 +114,11 @@
       "version": {
         "name": "Version"
       }
+    },
+    "switch": {
+      "pause": {
+        "name": "Pause updates"
+      }
     }
   },
   "issues": {
@@ -145,7 +150,7 @@
     },
     "rollback": {
       "name": "Roll back",
-      "description": "Install an older tag or commit for one configured integration and keep it there.",
+      "description": "Install an older tag or commit for one configured integration and pause updates.",
       "fields": {
         "folder": {
           "name": "Folder",

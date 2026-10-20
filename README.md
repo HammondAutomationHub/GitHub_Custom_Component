@@ -102,15 +102,20 @@ GPM adds one device per folder:
 
 | Entity | What it does |
 | --- | --- |
-| Update | Shows the installed and remote versions. **Install** downloads the current remote commit. |
+| Update | Shows the installed and remote versions. **Install** downloads the current remote commit and turns **Pause updates** off. |
 | Check for updates | Checks GitHub now. |
-| Reinstall | Downloads the remote commit again, even when the versions already match. |
+| Version | Lists tags and recent commits. Choosing one does not install it. |
+| Install version | Installs the chosen version. If it is not the latest commit, **Pause updates** turns on. |
+| Reinstall | Downloads the installed revision again while updates are paused. Otherwise downloads the remote commit, even when the versions already match. |
+| Pause updates | On after a rollback. While it is on, automatic mode leaves the folder where it is. Turn it off to let the next check follow the branch again. |
 
 The Update entity's release notes are the remote commit message, and the release URL opens that commit on GitHub.
 
 ## Roll back
 
-On the GPM device, open **Version** and choose a tag or a recent commit, then press **Install version**. GPM replaces the folder in `custom_components` with that revision and leaves it there. Automatic mode will not move that folder forward again until you install the latest commit from the Update entity.
+On the GPM device, open **Version** and choose a tag or a recent commit, then press **Install version**. GPM replaces the folder in `custom_components` with that revision and turns **Pause updates** on, so automatic mode will not move the folder forward. Turn **Pause updates** off when you want the next check to follow the branch again, or press **Install** on the Update entity to move to the latest commit and clear the pause.
+
+You can also turn **Pause updates** on without rolling back. That holds the folder on whatever is installed now.
 
 You can also call the `gpm.rollback` service with `folder` and `version`. `version` is a tag name, such as `v1.2.0`, or a commit SHA.
 
@@ -120,7 +125,7 @@ You can also call these services:
 
 - `gpm.check_updates` — optional `folder`. Omit it to check every GPM entry.
 - `gpm.install_update` — `folder` is required.
-- `gpm.rollback` — `folder` and `version` are required. Installs that tag or commit and keeps it there.
+- `gpm.rollback` — `folder` and `version` are required. Installs that tag or commit and pauses updates.
 
 Manual mode still checks once when Home Assistant starts, so the Update entity has a version to show. After that it checks only when you press the button, call the service, or a schedule is set.
 

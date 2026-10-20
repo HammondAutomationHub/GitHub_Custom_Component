@@ -63,7 +63,10 @@ class GPMUpdateEntity(GPMEntity, UpdateEntity):
 
     @property
     def auto_update(self) -> bool:
-        return self.coordinator.update_mode == UPDATE_MODE_AUTOMATIC
+        return (
+            self.coordinator.update_mode == UPDATE_MODE_AUTOMATIC
+            and not self.coordinator.paused
+        )
 
     @property
     def extra_state_attributes(self) -> dict[str, str | None]:

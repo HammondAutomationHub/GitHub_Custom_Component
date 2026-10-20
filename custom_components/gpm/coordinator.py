@@ -122,10 +122,10 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
         return self._interval_key(self.entry)
 
     @property
-    def pinned(self) -> bool:
-        """Return whether automatic updates are held at a chosen commit."""
+    def paused(self) -> bool:
+        """Return whether updates are paused on the installed revision."""
 
-        return bool(self._persisted.get("pinned"))
+        return bool(self._persisted.get("paused") or self._persisted.get("pinned"))
 
     @property
     def version_labels(self) -> list[str]:
@@ -144,6 +144,18 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
         """Return the tag or commit chosen for install, if any."""
 
         return self._selected_ref
+
+    async def async_set_paused(self, paused: bool) -> None:
+        """Pause or resume updates without changing the installed files."""
+
+        async with self._io:
+            self._persisted = persisted_state(
+                bootstrapped=bool(self._persisted.get("bootstrapped")),
+                installed_sha=self._persisted.get("installed_sha"),
+                paused=paused,
+            )
+            await self._store.async_save(self._persisted)
+        self.async_update_listeners()
 
     def select_version(self, label: str) -> None:
         """Remember a version dropdown choice. Does not install it."""
@@ -191,7 +203,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             version = await self._apply(status.remote_sha)
             installed, latest = in_sync_displays(version)
             self._persisted = persisted_state(
-                bootstrapped=True, installed_sha=status.remote_sha, pinned=False
+                bootstrapped=True, installed_sha=status.remote_sha, paused=False
             )
             await self._store.async_save(self._persisted)
             self._notify_restart()
@@ -228,7 +240,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             branch=self.branch,
             installed_sha=status.installed_sha if status else None,
             remote_sha=status.remote_sha if status else None,
-            pinned=self.pinned,
+            paused=self.paused,
         )
 
     async def _async_update_data(self) -> GPMStatus:
@@ -254,7 +266,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             bootstrapped=bool(self._persisted.get("bootstrapped")),
             installed_sha=self._persisted.get("installed_sha"),
             update_mode=self.update_mode,
-            pinned=self.pinned,
+            paused=self.paused,
         )
         await self._refresh_history()
         if not apply_policy:
@@ -263,7 +275,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
         self._persisted = persisted_state(
             bootstrapped=True,
             installed_sha=evaluation.decision.installed_sha,
-            pinned=self.pinned,
+            paused=self.paused,
         )
         await self._store.async_save(self._persisted)
 
@@ -282,7 +294,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                 self.installing = False
                 self.async_update_listeners()
             self._persisted = persisted_state(
-                bootstrapped=True, installed_sha=evaluation.remote_sha, pinned=False
+                bootstrapped=True, installed_sha=evaluation.remote_sha, paused=False
             )
             await self._store.async_save(self._persisted)
             self._notify_restart()
@@ -307,13 +319,17 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             )
         return self._status_from(evaluation, installed_sha=evaluation.decision.installed_sha)
 
-    async def async_install_ref(self, ref: str) -> None:
-        """Install a tag or commit and hold automatic updates on that revision."""
+    async def async_install_ref(self, ref: str, *, paused: bool | None = None) -> None:
+        """Install a tag or commit.
+
+        Rolling back to something other than the branch tip pauses updates.
+        Pass paused to keep the current pause when reinstalling that revision.
+        """
 
         async with self._io:
-            await self._install_ref_locked(ref)
+            await self._install_ref_locked(ref, paused=paused)
 
-    async def _install_ref_locked(self, ref: str) -> None:
+    async def _install_ref_locked(self, ref: str, paused: bool | None = None) -> None:
         """Install a specific ref while the coordinator I/O lock is held."""
 
         if self.installing:
@@ -340,13 +356,14 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                         self.owner, self.repo_name, tip, self.folder
                     )
                     remote_version = tip_manifest.version
-            pinned = commit.sha != tip
+            if paused is None:
+                paused = commit.sha != tip
             self._persisted = persisted_state(
-                bootstrapped=True, installed_sha=commit.sha, pinned=pinned
+                bootstrapped=True, installed_sha=commit.sha, paused=paused
             )
             await self._store.async_save(self._persisted)
             self._notify_restart()
-            if pinned:
+            if paused:
                 installed_display, latest_display = version_displays(
                     local_version=version,
                     local_sha=commit.sha,
@@ -362,16 +379,17 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                     installed_display=installed_display,
                     latest_display=latest_display,
                     commit_message=forward_message,
-                    update_available=pinned,
+                    update_available=paused,
                     local_version=version,
-                    remote_version=remote_version if pinned else version,
+                    remote_version=remote_version if paused else version,
                 )
             )
             _LOGGER.info(
-                "Installed %s %s at %s",
+                "Installed %s %s at %s%s",
                 self.folder,
                 version,
                 commit.sha[:7],
+                " and paused updates" if paused else "",
             )
         finally:
             self.installing = False

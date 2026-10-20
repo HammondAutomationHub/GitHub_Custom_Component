@@ -5,7 +5,7 @@ from __future__ import annotations
 
 def test_integration_modules_import() -> None:
     import custom_components.gpm as gpm
-    from custom_components.gpm import button, diagnostics, select, update
+    from custom_components.gpm import button, diagnostics, select, switch, update
     from custom_components.gpm.config_flow import GPMConfigFlow, GPMOptionsFlow
     from custom_components.gpm.const import DOMAIN
 
@@ -16,4 +16,5 @@ def test_integration_modules_import() -> None:
     assert update.GPMUpdateEntity
     assert button.GPMInstallVersionButton
     assert select.GPMVersionSelect
+    assert switch.GPMPauseSwitch
     assert diagnostics.async_get_config_entry_diagnostics

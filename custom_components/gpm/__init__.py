@@ -20,7 +20,12 @@ from .const import (
 )
 from .coordinator import GPMCoordinator
 
-PLATFORMS: list[Platform] = [Platform.UPDATE, Platform.BUTTON, Platform.SELECT]
+PLATFORMS: list[Platform] = [
+    Platform.UPDATE,
+    Platform.BUTTON,
+    Platform.SELECT,
+    Platform.SWITCH,
+]
 
 CHECK_SCHEMA = vol.Schema({vol.Optional(CONF_FOLDER): cv.string})
 INSTALL_SCHEMA = vol.Schema({vol.Required(CONF_FOLDER): cv.string})
