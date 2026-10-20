@@ -1,0 +1,139 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Choose an integration to update",
+        "description": "GPM updates a custom integration that is already installed under custom_components. It does not install a new integration.",
+        "data": {
+          "folder": "Integration folder"
+        }
+      },
+      "repo": {
+        "title": "GitHub repository",
+        "description": "Updates `{folder}` from this repository. Use a repository URL or owner/repo. A token is required for private repositories and recommended for public ones so GitHub does not rate-limit the checks.",
+        "data": {
+          "repo": "Repository",
+          "branch": "Branch",
+          "token": "GitHub token"
+        },
+        "data_description": {
+          "repo": "Example: https://github.com/owner/repo or owner/repo",
+          "branch": "Branch GPM should follow. The default is main.",
+          "token": "Fine-grained personal access token with Contents set to Read-only. Leave empty for a public repository."
+        }
+      },
+      "schedule": {
+        "title": "Update schedule",
+        "description": "GPM will check `{repo}`. Manual mode only reports an update. Automatic mode downloads it on the schedule below. Home Assistant still needs a restart after an install.",
+        "data": {
+          "update_mode": "When an update is found",
+          "check_interval": "How often to check"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update GitHub token",
+        "description": "GitHub rejected the token used for `{repo}` ({folder}).",
+        "data": {
+          "token": "GitHub token"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Enter a github.com repository URL or owner/repo. Do not put the token in the URL.",
+      "invalid_auth": "GitHub rejected the token, or the token cannot read this repository.",
+      "repo_not_found": "Repository not found. If it is private, the token needs access to it.",
+      "branch_not_found": "That branch was not found in the repository.",
+      "manifest_not_found": "Could not find this integration's manifest.json in the repository.",
+      "manifest_mismatch": "The repository manifest domain does not match the selected folder.",
+      "rate_limited": "GitHub rate limit reached. Add a token or try again later.",
+      "cannot_connect": "Could not reach GitHub.",
+      "archive_invalid": "The repository archive could not be installed.",
+      "automatic_needs_interval": "Automatic updates need a scheduled check. Choose hourly, daily, weekly, or another interval.",
+      "unknown": "Something went wrong. See the logs."
+    },
+    "abort": {
+      "already_configured": "That integration folder is already managed by GPM.",
+      "no_integrations": "No custom integrations were found in custom_components. Install one with HACS or copy it into custom_components first.",
+      "reauth_successful": "Token updated.",
+      "unknown": "Something went wrong. See the logs."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GPM options",
+        "description": "Updating `{folder}` from `{repo}`. Leave the token empty to keep the token that is already saved.",
+        "data": {
+          "branch": "Branch",
+          "token": "GitHub token",
+          "update_mode": "When an update is found",
+          "check_interval": "How often to check"
+        },
+        "data_description": {
+          "token": "Leave empty to keep the current token."
+        }
+      }
+    }
+  },
+  "selector": {
+    "update_mode": {
+      "options": {
+        "manual": "Manual — report the update, install when I choose",
+        "automatic": "Automatic — download the update when a check finds one"
+      }
+    },
+    "check_interval": {
+      "options": {
+        "manual": "Only when I check",
+        "hourly": "Hourly",
+        "6h": "Every 6 hours",
+        "12h": "Every 12 hours",
+        "daily": "Daily",
+        "weekly": "Weekly"
+      }
+    }
+  },
+  "entity": {
+    "update": {
+      "repository": {
+        "name": "Update"
+      }
+    },
+    "button": {
+      "check": {
+        "name": "Check for updates"
+      },
+      "reinstall": {
+        "name": "Reinstall"
+      }
+    }
+  },
+  "issues": {
+    "restart_required": {
+      "title": "Restart required to finish the GPM update",
+      "description": "GPM updated `{name}`. Restart Home Assistant to load the new code."
+    }
+  },
+  "services": {
+    "check_updates": {
+      "name": "Check for updates",
+      "description": "Check configured GitHub repositories now.",
+      "fields": {
+        "folder": {
+          "name": "Folder",
+          "description": "Integration folder to check. Leave empty to check every GPM entry."
+        }
+      }
+    },
+    "install_update": {
+      "name": "Install update",
+      "description": "Download and install the latest commit for one configured integration.",
+      "fields": {
+        "folder": {
+          "name": "Folder",
+          "description": "Integration folder configured in GPM."
+        }
+      }
+    }
+  }
+}

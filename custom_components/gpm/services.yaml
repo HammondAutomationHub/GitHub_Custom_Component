@@ -1,0 +1,11 @@
+check_updates:
+  fields:
+    folder:
+      selector:
+        text:
+install_update:
+  fields:
+    folder:
+      required: true
+      selector:
+        text:

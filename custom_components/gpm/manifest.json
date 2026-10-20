@@ -1,0 +1,12 @@
+{
+  "domain": "gpm",
+  "name": "GPM",
+  "codeowners": ["@HammondAutomationHub"],
+  "config_flow": true,
+  "documentation": "https://github.com/HammondAutomationHub/HomeAssistnat-GPM",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/HammondAutomationHub/HomeAssistnat-GPM/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

@@ -1,0 +1,17 @@
+{
+  "entity": {
+    "update": {
+      "repository": {
+        "default": "mdi:github"
+      }
+    },
+    "button": {
+      "check": {
+        "default": "mdi:update"
+      },
+      "reinstall": {
+        "default": "mdi:download"
+      }
+    }
+  }
+}
