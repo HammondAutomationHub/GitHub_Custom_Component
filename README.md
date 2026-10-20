@@ -43,9 +43,7 @@ For each integration folder:
 2. Open the top-right menu and choose **Custom repositories**.
 3. Add this repository as an **Integration**:
 
-   `https://github.com/HammondAutomationHub/HomeAssistnat-GPM`
-
-   The repository name is spelled `HomeAssistnat-GPM`.
+   `https://github.com/HammondAutomationHub/HomeAssistant-GPM`
 4. In the HACS integrations list, find **GPM** and download it.
 5. Restart Home Assistant.
 6. Go to **Settings → Devices & services → Add integration** and choose **GPM**.

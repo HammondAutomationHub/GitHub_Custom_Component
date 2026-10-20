@@ -25,5 +25,5 @@ If HACS also updates that integration, ignore it in HACS so the two do not overw
 
 Install GPM from HACS, or copy `custom_components/gpm` into your config folder manually, then restart Home Assistant.
 
-Repository: `https://github.com/HammondAutomationHub/HomeAssistnat-GPM`
+Repository: `https://github.com/HammondAutomationHub/HomeAssistant-GPM`
 {% endif %}
