@@ -1,6 +1,6 @@
 # GPM
 
-Uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/main/install/install.sh) and adds what that script does not configure: install from HACS or manually, a UI to pick a custom integration that was installed from HACS or copied in manually, a private GitHub repository and token, and how often to check (manual, hourly, daily, weekly, and similar).
+Updates custom integrations that are already installed under `custom_components`. Install GPM from HACS or copy it in manually. Choose a folder that was installed from HACS or copied in manually, point it at a GitHub repository with a token when the repo is private, and choose how often to check (manual, hourly, daily, weekly, and similar).
 
 {% if installed %}
 ## Configure

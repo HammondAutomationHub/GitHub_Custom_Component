@@ -1,14 +1,13 @@
 # GPM
 
-This uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/main/install/install.sh) and adds the configuration that script does not include.
+GPM updates custom integrations that are already installed under `custom_components`.
 
-The script finds Home Assistant, installs GPM, and writes a `gpm:` block into `configuration.yaml`. This repository keeps that role and adds:
+Install GPM from HACS or copy it in manually, then configure it in the Home Assistant UI. For each integration it manages, you choose:
 
-- Install GPM from HACS or manually, then configure it in the Home Assistant UI
-- Choose a custom integration that was installed from HACS or copied in manually. It must be a folder in `custom_components` with a `manifest.json`
-- Point that folder at a private GitHub repository
-- Provide a token for that repository
-- Choose manual updates, or an automatic check on a schedule (hourly, every 6 or 12 hours, daily, or weekly)
+- The folder to update. That integration can come from HACS or be copied in manually, and it must include a `manifest.json`
+- A GitHub repository, including a private one
+- A token for that repository
+- Manual updates, or an automatic check on a schedule (hourly, every 6 or 12 hours, daily, or weekly)
 
 GPM itself can be installed from HACS or manually. The integrations it updates can also be installed either way. Both end up in `custom_components`. GPM manages the folder you select there.
 
@@ -182,4 +181,4 @@ The tests cover repository parsing, the manual/automatic decision, archive insta
 - A bad commit on the tracked branch can break the next restart. Use manual mode for integrations you cannot do without, and keep Home Assistant backups.
 - Automatic install still needs a restart before the new code runs.
 - The download is limited to 100 MB so a repository cannot fill the disk unnoticed.
-- Built on the [tomasbedrich/gpm](https://github.com/tomasbedrich/gpm) installer. The additions are HACS install, UI setup, per-folder updates, private GitHub authentication, and a check schedule. Dashboard resources from that project are unchanged here. Updates are downloaded with the GitHub API, so a git binary is not required.
+- Updates are downloaded with the GitHub API, so a git binary is not required.
