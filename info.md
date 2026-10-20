@@ -1,6 +1,6 @@
 # GPM
 
-Update custom integrations already installed in `custom_components` from a GitHub repository, including private repositories.
+Uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/main/install/install.sh) and adds what that script does not configure: HACS install, a UI to pick an already installed custom integration folder, a private GitHub repository and token, and how often to check (manual, hourly, daily, weekly, and similar).
 
 {% if installed %}
 ## Configure

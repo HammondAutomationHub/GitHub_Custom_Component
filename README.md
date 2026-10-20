@@ -1,8 +1,16 @@
 # GPM
 
-GPM updates custom integrations that are already installed in Home Assistant. You pick the folder, point it at a GitHub repository (public or private), and choose whether updates are installed manually or on a schedule.
+This uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/main/install/install.sh) and adds the configuration that script does not include.
 
-GPM is installed with HACS. The integrations it updates can be ones you originally installed with HACS, or any other custom integration that lives in `custom_components/<folder>` and has a `manifest.json`.
+The script finds Home Assistant, installs GPM, and writes a `gpm:` block into `configuration.yaml`. This repository keeps that role and adds:
+
+- Install from HACS, then configure everything in the Home Assistant UI
+- Choose which custom integration folder to update (one installed by HACS, or any other folder in `custom_components` with a `manifest.json`)
+- Point that folder at a private GitHub repository
+- Provide a token for that repository
+- Choose manual updates, or an automatic check on a schedule (hourly, every 6 or 12 hours, daily, or weekly)
+
+GPM is installed with HACS. It then updates integrations that are already on disk.
 
 ## What you can configure
 
@@ -148,4 +156,4 @@ The tests cover repository parsing, the manual/automatic decision, archive insta
 - A bad commit on the tracked branch can break the next restart. Use manual mode for integrations you cannot do without, and keep Home Assistant backups.
 - Automatic install still needs a restart before the new code runs.
 - The download is limited to 100 MB so a repository cannot fill the disk unnoticed.
-- This is not the upstream [tomasbedrich/gpm](https://github.com/tomasbedrich/gpm) project. That project clones repositories with git and can also install dashboard resources. This integration updates existing custom-component folders through the GitHub API, including private repositories, and does not need a git binary.
+- Built on the [tomasbedrich/gpm](https://github.com/tomasbedrich/gpm) installer. The additions are HACS install, UI setup, per-folder updates, private GitHub authentication, and a check schedule. Dashboard resources from that project are unchanged here. Updates are downloaded with the GitHub API, so a git binary is not required.
