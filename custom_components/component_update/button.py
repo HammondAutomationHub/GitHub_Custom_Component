@@ -9,8 +9,8 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import GPMCoordinator
-from .entity import GPMEntity
+from .coordinator import ComponentUpdateCoordinator
+from .entity import ComponentUpdateEntity
 
 
 async def async_setup_entry(
@@ -23,19 +23,19 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         [
-            GPMCheckButton(coordinator),
-            GPMReinstallButton(coordinator),
-            GPMInstallVersionButton(coordinator),
+            ComponentUpdateCheckButton(coordinator),
+            ComponentUpdateReinstallButton(coordinator),
+            ComponentUpdateInstallVersionButton(coordinator),
         ]
     )
 
 
-class GPMCheckButton(GPMEntity, ButtonEntity):
+class ComponentUpdateCheckButton(ComponentUpdateEntity, ButtonEntity):
     """Check GitHub now. Available even when the last check failed."""
 
     _attr_translation_key = "check"
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_check"
 
@@ -47,12 +47,12 @@ class GPMCheckButton(GPMEntity, ButtonEntity):
         await self.coordinator.async_request_refresh()
 
 
-class GPMReinstallButton(GPMEntity, ButtonEntity):
+class ComponentUpdateReinstallButton(ComponentUpdateEntity, ButtonEntity):
     """Reinstall the current remote commit even when versions already match."""
 
     _attr_translation_key = "reinstall"
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_reinstall"
 
@@ -70,12 +70,12 @@ class GPMReinstallButton(GPMEntity, ButtonEntity):
         await self.coordinator.async_install(force=True)
 
 
-class GPMInstallVersionButton(GPMEntity, ButtonEntity):
+class ComponentUpdateInstallVersionButton(ComponentUpdateEntity, ButtonEntity):
     """Install the tag or commit chosen in the version dropdown."""
 
     _attr_translation_key = "install_version"
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_install_version"
 

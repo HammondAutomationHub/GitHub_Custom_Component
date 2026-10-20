@@ -43,7 +43,7 @@ class RepoMeta:
 
 @dataclass(frozen=True)
 class CommitInfo:
-    """A commit GPM can install."""
+    """A commit Component Update can install."""
 
     sha: str
     message: str

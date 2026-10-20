@@ -1,4 +1,4 @@
-"""UI configuration for GPM."""
+"""UI configuration for Component Update."""
 
 from __future__ import annotations
 
@@ -35,13 +35,13 @@ from .const import (
     UPDATE_MODE_MANUAL,
     UPDATE_MODES,
 )
-from .errors import GPMError, InvalidSchedule
+from .errors import ComponentUpdateError, InvalidSchedule
 from .installer import list_integrations
 from .repo import schedule_error
 from .validate import validate_repository
 
 
-class GPMConfigFlow(ConfigFlow, domain=DOMAIN):
+class ComponentUpdateConfigFlow(ConfigFlow, domain=DOMAIN):
     """Configure one custom integration folder and the GitHub repo that updates it."""
 
     VERSION = 1
@@ -103,7 +103,7 @@ class GPMConfigFlow(ConfigFlow, domain=DOMAIN):
                     user_input.get(CONF_BRANCH) or DEFAULT_BRANCH,
                     self._folder or "",
                 )
-            except GPMError as err:
+            except ComponentUpdateError as err:
                 errors["base"] = err.code
             else:
                 self._repo = slug
@@ -177,7 +177,7 @@ class GPMConfigFlow(ConfigFlow, domain=DOMAIN):
                     entry.data.get(CONF_BRANCH),
                     entry.data[CONF_FOLDER],
                 )
-            except GPMError as err:
+            except ComponentUpdateError as err:
                 errors["base"] = err.code
             else:
                 self.hass.config_entries.async_update_entry(
@@ -205,10 +205,10 @@ class GPMConfigFlow(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> GPMOptionsFlow:
+    def async_get_options_flow(config_entry: ConfigEntry) -> ComponentUpdateOptionsFlow:
         """Return the options flow."""
 
-        return GPMOptionsFlow()
+        return ComponentUpdateOptionsFlow()
 
     @staticmethod
     def _repo_schema(defaults: dict[str, Any]) -> vol.Schema:
@@ -253,7 +253,7 @@ class GPMConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
-class GPMOptionsFlow(OptionsFlow):
+class ComponentUpdateOptionsFlow(OptionsFlow):
     """Change branch, token, and schedule for an existing entry."""
 
     async def async_step_init(
@@ -276,7 +276,7 @@ class GPMOptionsFlow(OptionsFlow):
                 )
             except InvalidSchedule:
                 errors["base"] = "automatic_needs_interval"
-            except GPMError as err:
+            except ComponentUpdateError as err:
                 errors["base"] = err.code
             else:
                 self.hass.config_entries.async_update_entry(

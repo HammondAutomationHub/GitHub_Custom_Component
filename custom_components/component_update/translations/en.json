@@ -18,13 +18,13 @@
         },
         "data_description": {
           "repo": "Example: https://github.com/owner/repo or owner/repo",
-          "branch": "Branch GPM should follow. The default is main.",
+          "branch": "Branch Component Update should follow. The default is main.",
           "token": "Fine-grained personal access token with Contents set to Read-only. Leave empty for a public repository."
         }
       },
       "schedule": {
         "title": "Update schedule",
-        "description": "GPM will check `{repo}`. Manual mode only reports an update. Automatic mode downloads it on the schedule below. Home Assistant still needs a restart after an install.",
+        "description": "Component Update will check `{repo}`. Manual mode only reports an update. Automatic mode downloads it on the schedule below. Home Assistant still needs a restart after an install.",
         "data": {
           "update_mode": "When an update is found",
           "check_interval": "How often to check"
@@ -52,7 +52,7 @@
       "unknown": "Something went wrong. See the logs."
     },
     "abort": {
-      "already_configured": "That integration folder is already managed by GPM.",
+      "already_configured": "That integration folder is already managed by Component Update.",
       "no_integrations": "No custom integrations were found in custom_components. Install one from HACS or copy it in manually first.",
       "reauth_successful": "Token updated.",
       "unknown": "Something went wrong. See the logs."
@@ -61,7 +61,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "GPM options",
+        "title": "Component Update options",
         "description": "Updating `{folder}` from `{repo}`. Leave the token empty to keep the token that is already saved.",
         "data": {
           "branch": "Branch",
@@ -123,12 +123,12 @@
   },
   "issues": {
     "restart_required": {
-      "title": "Restart required to finish the GPM update",
-      "description": "GPM updated `{name}`. Restart Home Assistant to load the new code."
+      "title": "Restart required to finish the update",
+      "description": "Component Update wrote a new version of `{name}`. Restart Home Assistant to load the new code."
     },
     "rollback_paused": {
       "title": "Rolled back and updates are paused",
-      "description": "GPM installed an older version of `{name}` and paused updates. This folder stays on that version until you turn off Updates paused or install the latest version. Restart Home Assistant to load the new code."
+      "description": "Component Update installed an older version of `{name}` and paused updates. This folder stays on that version until you turn off Updates paused or install the latest version. Restart Home Assistant to load the new code."
     }
   },
   "services": {
@@ -138,7 +138,7 @@
       "fields": {
         "folder": {
           "name": "Folder",
-          "description": "Integration folder to check. Leave empty to check every GPM entry."
+          "description": "Integration folder to check. Leave empty to check every Component Update entry."
         }
       }
     },
@@ -148,7 +148,7 @@
       "fields": {
         "folder": {
           "name": "Folder",
-          "description": "Integration folder configured in GPM."
+          "description": "Integration folder configured in Component Update."
         }
       }
     },
@@ -158,7 +158,7 @@
       "fields": {
         "folder": {
           "name": "Folder",
-          "description": "Integration folder configured in GPM."
+          "description": "Integration folder configured in Component Update."
         },
         "version": {
           "name": "Version",

@@ -7,17 +7,17 @@ from pathlib import Path
 
 import pytest
 
-from custom_components.gpm.const import CHECK_INTERVALS, UPDATE_MODES
-from custom_components.gpm.errors import InvalidSchedule, InvalidUrl
-from custom_components.gpm.policy import persisted_state
-from custom_components.gpm.repo import (
+from custom_components.component_update.const import CHECK_INTERVALS, UPDATE_MODES
+from custom_components.component_update.errors import InvalidSchedule, InvalidUrl
+from custom_components.component_update.policy import persisted_state
+from custom_components.component_update.repo import (
     normalize_branch,
     parse_github_repo,
     redact_config,
     schedule_error,
     version_displays,
 )
-from custom_components.gpm.updater import status_attributes
+from custom_components.component_update.updater import status_attributes
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -116,9 +116,9 @@ def test_redaction_and_attributes_do_not_carry_a_token() -> None:
 
 
 def test_check_intervals_match_the_ui_strings() -> None:
-    strings = json.loads((ROOT / "custom_components" / "gpm" / "strings.json").read_text())
+    strings = json.loads((ROOT / "custom_components" / "component_update" / "strings.json").read_text())
     english = json.loads(
-        (ROOT / "custom_components" / "gpm" / "translations" / "en.json").read_text()
+        (ROOT / "custom_components" / "component_update" / "translations" / "en.json").read_text()
     )
     assert english == strings
     assert set(strings["selector"]["check_interval"]["options"]) == set(CHECK_INTERVALS)

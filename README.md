@@ -1,29 +1,29 @@
-# GPM
+# Component Update
 
-GPM updates custom integrations that are already installed under `custom_components`.
+Component Update keeps custom integrations that are already installed under `custom_components` current.
 
-Install GPM from HACS or copy it in manually, then configure it in the Home Assistant UI. For each integration it manages, you choose:
+Install Component Update from HACS or copy it in manually, then configure it in the Home Assistant UI. For each integration it manages, you choose:
 
 - The folder to update. That integration can come from HACS or be copied in manually, and it must include a `manifest.json`
 - A GitHub repository, including a private one
 - A token for that repository
 - Manual updates, or an automatic check on a schedule (hourly, every 6 or 12 hours, daily, or weekly)
 
-GPM itself can be installed from HACS or manually. The integrations it updates can also be installed either way. Both end up in `custom_components`. GPM manages the folder you select there.
+Component Update itself can be installed from HACS or manually. The integrations it updates can also be installed either way. Both end up in `custom_components`. Component Update manages the folder you select there.
 
 ## FAQ
 
 ### I started with a public GitHub repo and want to make it private
 
-That is a purpose of this tool. The integration can stay in `custom_components/<folder>`. GPM takes over updates after the GitHub repository is private.
+That is a purpose of this tool. The integration can stay in `custom_components/<folder>`. Component Update takes over updates after the GitHub repository is private.
 
 1. Leave the installed folder where it is.
 2. On GitHub, change that repository from public to private.
 3. Create a fine-grained token that can read the private repository. Set **Contents** to **Read-only**.
-4. Add GPM, choose that folder, enter the same repository and branch, and paste the token.
+4. Add Component Update, choose that folder, enter the same repository and branch, and paste the token.
 5. If HACS was updating the public repository, ignore or remove it in HACS. HACS will no longer be able to see a private repo it is not allowed to read, and the two updaters would otherwise overwrite the same folder.
 
-GPM does not change the repository's visibility. You do that on GitHub. The first check does not reinstall when the local version already matches. Later commits on the private repo are what GPM offers to install.
+Component Update does not change the repository's visibility. You do that on GitHub. The first check does not reinstall when the local version already matches. Later commits on the private repo are what Component Update offers to install.
 
 ## What you can configure
 
@@ -42,22 +42,22 @@ For each integration folder:
 2. Open the top-right menu and choose **Custom repositories**.
 3. Add this repository as an **Integration**:
 
-   `https://github.com/HammondAutomationHub/HomeAssistant-GPM`
-4. In the HACS integrations list, find **GPM** and download it.
+   `https://github.com/HammondAutomationHub/HomeAssistant_ComponentUpdate`
+4. In the HACS integrations list, find **Component Update** and download it.
 5. Restart Home Assistant.
-6. Go to **Settings → Devices & services → Add integration** and choose **GPM**.
+6. Go to **Settings → Devices & services → Add integration** and choose **Component Update**.
 
-HACS needs the files in `custom_components/gpm` on the default branch. This repository is laid out that way.
+HACS needs the files in `custom_components/component_update` on the default branch. This repository is laid out that way.
 
 ## Install manually
 
-Copy `custom_components/gpm` into your Home Assistant config directory:
+Copy `custom_components/component_update` into your Home Assistant config directory:
 
 ```text
-<config>/custom_components/gpm
+<config>/custom_components/component_update
 ```
 
-Restart Home Assistant, then add the **GPM** integration from **Settings → Devices & services**.
+Restart Home Assistant, then add the **Component Update** integration from **Settings → Devices & services**.
 
 ## Create a GitHub token
 
@@ -66,11 +66,11 @@ Private repositories need a token. A token is also worth adding for public repos
 Use a fine-grained personal access token:
 
 1. On GitHub, open **Settings → Developer settings → Personal access tokens → Fine-grained tokens**.
-2. Give it access only to the repositories GPM should read.
+2. Give it access only to the repositories Component Update should read.
 3. Under **Repository permissions**, set **Contents** to **Read-only**.
-4. Generate the token and paste it into the GPM token field.
+4. Generate the token and paste it into the Component Update token field.
 
-Do not put the token in the repository URL. GPM rejects URLs that contain credentials.
+Do not put the token in the repository URL. Component Update rejects URLs that contain credentials.
 
 The token is stored in Home Assistant's config entry storage (`.storage/core.config_entries`), which is how Home Assistant stores integration secrets. Use a read-only token and protect backups of the config directory.
 
@@ -78,8 +78,8 @@ The token is stored in Home Assistant's config entry storage (`.storage/core.con
 
 The config flow has three steps.
 
-1. **Folder.** GPM lists directories in `custom_components` that contain a `manifest.json`. It does not list itself. Install that integration from HACS or copy it in manually before you add it to GPM.
-2. **Repository.** Enter the GitHub URL or `owner/repo`, the branch (default `main`), and the token if the repo is private. GPM checks that the branch exists and that the repo contains this integration. The expected layouts are:
+1. **Folder.** Component Update lists directories in `custom_components` that contain a `manifest.json`. It does not list itself. Install that integration from HACS or copy it in manually before you add it to Component Update.
+2. **Repository.** Enter the GitHub URL or `owner/repo`, the branch (default `main`), and the token if the repo is private. Component Update checks that the branch exists and that the repo contains this integration. The expected layouts are:
    - `custom_components/<folder>/manifest.json` (the usual HACS layout)
    - `manifest.json` at the repository root, with `domain` equal to the folder name
 3. **Schedule.**
@@ -87,7 +87,7 @@ The config flow has three steps.
    - **Automatic** downloads the update when a later check finds a new commit.
    - Automatic mode needs a real interval. "Only when I check" cannot be combined with automatic installs.
 
-The first check does not install anything. If the version in the local `manifest.json` already matches the remote manifest, GPM treats that commit as what is installed. If the versions differ, the Update entity shows an update and waits for you, even in automatic mode. The next scheduled check can install automatically.
+The first check does not install anything. If the version in the local `manifest.json` already matches the remote manifest, Component Update treats that commit as what is installed. If the versions differ, the Update entity shows an update and waits for you, even in automatic mode. The next scheduled check can install automatically.
 
 Changing the branch, token, or schedule later is done from the integration's **Configure** button. Leave the token blank there to keep the saved token. If GitHub starts rejecting the token, Home Assistant opens a reauthentication prompt.
 
@@ -95,7 +95,7 @@ Each folder can only be configured once.
 
 ## Install an update
 
-GPM adds one device per folder:
+Component Update adds one device per folder:
 
 | Entity | What it does |
 | --- | --- |
@@ -110,31 +110,31 @@ The Update entity's release notes are the remote commit message, and the release
 
 ## Roll back
 
-On the GPM device, open **Rollback version** and choose a tag or a recent commit, then press **Install version and pause**. GPM replaces the folder in `custom_components` with that revision and turns **Updates paused** on. The Update entity title, the repair item, and the **Updates paused** switch all say that updates are paused. Turn **Updates paused** off when you want the next check to follow the branch again, or press **Install** on the Update entity to move to the latest commit and clear the pause.
+On the Component Update device, open **Rollback version** and choose a tag or a recent commit, then press **Install version and pause**. Component Update replaces the folder in `custom_components` with that revision and turns **Updates paused** on. The Update entity title, the repair item, and the **Updates paused** switch all say that updates are paused. Turn **Updates paused** off when you want the next check to follow the branch again, or press **Install** on the Update entity to move to the latest commit and clear the pause.
 
 You can also turn **Updates paused** on without rolling back. That holds the folder on whatever is installed now. The switch state says whether updates are paused.
 
-You can also call the `gpm.rollback` service with `folder` and `version`. `version` is a tag name, such as `v1.2.0`, or a commit SHA.
+You can also call the `component_update.rollback` service with `folder` and `version`. `version` is a tag name, such as `v1.2.0`, or a commit SHA.
 
 Restart Home Assistant after a rollback, the same as after any other install.
 
 You can also call these services:
 
-- `gpm.check_updates` — optional `folder`. Omit it to check every GPM entry.
-- `gpm.install_update` — `folder` is required.
-- `gpm.rollback` — `folder` and `version` are required. Installs that tag or commit and pauses updates.
+- `component_update.check_updates` — optional `folder`. Omit it to check every Component Update entry.
+- `component_update.install_update` — `folder` is required.
+- `component_update.rollback` — `folder` and `version` are required. Installs that tag or commit and pauses updates.
 
 Manual mode still checks once when Home Assistant starts, so the Update entity has a version to show. After that it checks only when you press the button, call the service, or a schedule is set.
 
-Automatic mode checks on the interval you chose (and once at startup after the first bootstrap). When it downloads an update, GPM raises a repair: **Restart required to finish the GPM update**. Custom component code is not reloaded until you restart Home Assistant.
+Automatic mode checks on the interval you chose (and once at startup after the first bootstrap). When it downloads an update, Component Update raises a repair: **Restart required to finish the update**. Custom component code is not reloaded until you restart Home Assistant.
 
 ## Using this with HACS
 
-GPM does not install new integrations and it does not browse the HACS store. The first install of each integration is from HACS or a manual copy. GPM then keeps that folder in sync with a GitHub branch.
+Component Update does not install new integrations and it does not browse the HACS store. The first install of each integration is from HACS or a manual copy. Component Update then keeps that folder in sync with a GitHub branch.
 
-If HACS is also set to update that same integration, the two will overwrite each other. After GPM owns the updates, ignore that repository in HACS or remove it from HACS. Leaving the files in `custom_components` is enough for GPM.
+If HACS is also set to update that same integration, the two will overwrite each other. After Component Update owns the updates, ignore that repository in HACS or remove it from HACS. Leaving the files in `custom_components` is enough for Component Update.
 
-GPM follows the branch you name. It does not follow GitHub Releases unless that branch moves when you publish one.
+Component Update follows the branch you name. It does not follow GitHub Releases unless that branch moves when you publish one.
 
 ## Troubleshooting
 
@@ -147,17 +147,17 @@ GPM follows the branch you name. It does not follow GitHub Releases unless that 
 | Could not find manifest.json | The repo must contain `custom_components/<folder>/manifest.json`, or a root `manifest.json` whose `domain` is the folder name. |
 | Manifest domain does not match | The folder name and the manifest `domain` must be the same. |
 | Rate limit reached | Add a token, or check less often than hourly. |
-| Restart required | Restart Home Assistant after GPM writes new component files. |
+| Restart required | Restart Home Assistant after Component Update writes new component files. |
 
 Debug logs:
 
 ```yaml
 logger:
   logs:
-    custom_components.gpm: debug
+    custom_components.component_update: debug
 ```
 
-GPM does not log the token.
+Component Update does not log the token.
 
 ## Development
 
@@ -176,7 +176,7 @@ The tests cover repository parsing, the manual/automatic decision, archive insta
 ## Limits
 
 - GitHub.com only. GitHub Enterprise Server is not supported.
-- GPM will not update its own folder.
+- Component Update will not update its own folder.
 - Updates copy the integration files. They do not run the integration's own migrations beyond what that integration does on the next Home Assistant start.
 - A bad commit on the tracked branch can break the next restart. Use manual mode for integrations you cannot do without, and keep Home Assistant backups.
 - Automatic install still needs a restart before the new code runs.

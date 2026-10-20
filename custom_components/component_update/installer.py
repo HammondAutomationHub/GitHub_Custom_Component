@@ -44,7 +44,7 @@ def install_archive(zip_path: Path, config_dir: Path, folder: str) -> str:
     """
 
     dest = integration_dir(config_dir, folder)
-    with tempfile.TemporaryDirectory(prefix="gpm-extract-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="component-update-extract-") as tmp:
         root = Path(tmp)
         safe_extract(zip_path, root)
         located = locate_component(root, folder)
@@ -59,7 +59,7 @@ def read_local_version(config_dir: Path, folder: str) -> str:
     manifest = dest / "manifest.json"
     if not manifest.is_file():
         raise ManifestNotFound(
-            f"{folder} is not installed in custom_components. Install it before GPM can update it."
+            f"{folder} is not installed in custom_components. Install it before Component Update can update it."
         )
     try:
         data = json.loads(manifest.read_text(encoding="utf-8"))
@@ -69,7 +69,7 @@ def read_local_version(config_dir: Path, folder: str) -> str:
 
 
 def list_integrations(config_dir: Path) -> list[tuple[str, str]]:
-    """Return ``(folder, label)`` for custom components GPM is allowed to update."""
+    """Return ``(folder, label)`` for custom components Component Update is allowed to update."""
 
     base = config_dir / "custom_components"
     if not base.is_dir():
@@ -110,7 +110,7 @@ def safe_extract(zip_path: Path, dest: Path) -> None:
         total = 0
         for info in archive.infolist():
             if _is_symlink(info):
-                raise ArchiveError("Archive contains a symlink, which GPM will not extract.")
+                raise ArchiveError("Archive contains a symlink, which Component Update will not extract.")
             if _unsafe_name(info.filename):
                 raise ArchiveError("Archive contains an unsafe path.")
             if info.file_size > MAX_FILE_BYTES:
@@ -159,8 +159,8 @@ def replace_tree(source: Path, dest: Path) -> None:
     """Replace ``dest`` with ``source``, restoring ``dest`` if the swap fails."""
 
     dest.parent.mkdir(parents=True, exist_ok=True)
-    staging = dest.with_name(dest.name + ".gpm-new")
-    backup = dest.with_name(dest.name + ".gpm-backup")
+    staging = dest.with_name(dest.name + ".component-update-new")
+    backup = dest.with_name(dest.name + ".component-update-backup")
     if staging.exists():
         shutil.rmtree(staging)
     if backup.exists():
@@ -191,7 +191,7 @@ def _load_component(path: Path, folder: str) -> LocatedComponent:
             f"Remote manifest domain is {domain!r}, expected {folder!r}."
         )
     if folder == DOMAIN:
-        raise ArchiveError("Refusing to overwrite GPM itself.")
+        raise ArchiveError("Refusing to overwrite Component Update itself.")
     return LocatedComponent(path=path, version=str(data.get("version") or "0"))
 
 

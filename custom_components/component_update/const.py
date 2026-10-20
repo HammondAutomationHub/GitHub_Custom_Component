@@ -1,10 +1,10 @@
-"""Constants for the GPM custom integration updater."""
+"""Constants for the Component Update custom integration updater."""
 
 from __future__ import annotations
 
 from datetime import timedelta
 
-DOMAIN = "gpm"
+DOMAIN = "component_update"
 
 CONF_FOLDER = "folder"
 CONF_REPO = "repo"
@@ -43,7 +43,7 @@ HISTORY_LIMIT = 15
 
 DEFAULT_BRANCH = "main"
 GITHUB_API = "https://api.github.com"
-USER_AGENT = "HA-GPM"
+USER_AGENT = "HomeAssistant_ComponentUpdate"
 MAX_DOWNLOAD_BYTES = 100 * 1024 * 1024
 MAX_FILE_BYTES = 50 * 1024 * 1024
 

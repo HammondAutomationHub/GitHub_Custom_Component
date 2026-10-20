@@ -1,4 +1,4 @@
-"""Pure decisions for when GPM checks and installs. No I/O."""
+"""Pure decisions for when Component Update checks and installs. No I/O."""
 
 from __future__ import annotations
 

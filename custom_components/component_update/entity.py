@@ -6,19 +6,19 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
-from .coordinator import GPMCoordinator
+from .coordinator import ComponentUpdateCoordinator
 
 
-class GPMEntity(CoordinatorEntity[GPMCoordinator]):
+class ComponentUpdateEntity(CoordinatorEntity[ComponentUpdateCoordinator]):
     """Base entity for one configured integration folder."""
 
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.entry.entry_id)},
-            name=f"GPM {coordinator.folder}",
+            name=f"Component Update {coordinator.folder}",
             manufacturer="Hammond Automation Hub",
             model="Custom integration updater",
             configuration_url=f"https://github.com/{coordinator.repo}",

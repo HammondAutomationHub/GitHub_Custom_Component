@@ -9,8 +9,8 @@ import zipfile
 
 import pytest
 
-from custom_components.gpm.errors import ArchiveError, ManifestMismatch, ManifestNotFound
-from custom_components.gpm.installer import (
+from custom_components.component_update.errors import ArchiveError, ManifestMismatch, ManifestNotFound
+from custom_components.component_update.installer import (
     install_archive,
     list_integrations,
     locate_component,
@@ -52,7 +52,7 @@ def test_install_replaces_hacs_layout_and_removes_stale_files(tmp_path: Path) ->
     assert (folder / "new.py").is_file()
     assert (folder / "__init__.py").read_text(encoding="utf-8") == "UPDATED = True\n"
     assert not (folder / "old.py").exists()
-    assert not (folder.parent / "demo.gpm-backup").exists()
+    assert not (folder.parent / "demo.component-update-backup").exists()
     assert not (config / "custom_components" / "README.md").exists()
 
 
@@ -106,20 +106,20 @@ def test_domain_mismatch_and_self_update_are_refused(tmp_path: Path) -> None:
         locate_component(tmp_path / "extract", "demo")
 
     config = tmp_path / "config"
-    archive = tmp_path / "gpm.zip"
-    _zip(archive, {"manifest.json": _manifest("gpm", "1.0.0")})
+    archive = tmp_path / "component-update.zip"
+    _zip(archive, {"manifest.json": _manifest("component_update", "1.0.0")})
     with pytest.raises(ArchiveError):
-        install_archive(archive, config, "gpm")
+        install_archive(archive, config, "component_update")
     with pytest.raises(ArchiveError):
         install_archive(archive, config, "../demo")
 
 
-def test_folder_list_skips_gpm_and_folders_without_a_manifest(tmp_path: Path) -> None:
+def test_folder_list_skips_itself_and_folders_without_a_manifest(tmp_path: Path) -> None:
     base = tmp_path / "custom_components"
     (base / "demo").mkdir(parents=True)
     (base / "demo" / "manifest.json").write_text(_manifest("demo", "1.0.0"), encoding="utf-8")
-    (base / "gpm").mkdir()
-    (base / "gpm" / "manifest.json").write_text(_manifest("gpm", "1.0.0"), encoding="utf-8")
+    (base / "component_update").mkdir()
+    (base / "component_update" / "manifest.json").write_text(_manifest("component_update", "1.0.0"), encoding="utf-8")
     (base / "notes").mkdir()
     found = list_integrations(tmp_path)
     assert [item[0] for item in found] == ["demo"]

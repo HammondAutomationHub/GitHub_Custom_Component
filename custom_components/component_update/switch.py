@@ -8,8 +8,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import GPMCoordinator
-from .entity import GPMEntity
+from .coordinator import ComponentUpdateCoordinator
+from .entity import ComponentUpdateEntity
 
 
 async def async_setup_entry(
@@ -19,16 +19,16 @@ async def async_setup_entry(
 ) -> None:
     """Create the pause switch."""
 
-    coordinator: GPMCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([GPMPauseSwitch(coordinator)])
+    coordinator: ComponentUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    async_add_entities([ComponentUpdatePauseSwitch(coordinator)])
 
 
-class GPMPauseSwitch(GPMEntity, SwitchEntity):
+class ComponentUpdatePauseSwitch(ComponentUpdateEntity, SwitchEntity):
     """On means this folder stays on the installed revision."""
 
     _attr_translation_key = "pause"
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_pause"
 

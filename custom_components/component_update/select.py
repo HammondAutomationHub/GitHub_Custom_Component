@@ -9,8 +9,8 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import GPMCoordinator
-from .entity import GPMEntity
+from .coordinator import ComponentUpdateCoordinator
+from .entity import ComponentUpdateEntity
 
 
 async def async_setup_entry(
@@ -20,15 +20,15 @@ async def async_setup_entry(
 ) -> None:
     """Create the version selector."""
 
-    async_add_entities([GPMVersionSelect(hass.data[DOMAIN][entry.entry_id])])
+    async_add_entities([ComponentUpdateVersionSelect(hass.data[DOMAIN][entry.entry_id])])
 
 
-class GPMVersionSelect(GPMEntity, SelectEntity):
+class ComponentUpdateVersionSelect(ComponentUpdateEntity, SelectEntity):
     """Pick a tag or recent commit. Installing it is a separate button."""
 
     _attr_translation_key = "version"
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_version"
 

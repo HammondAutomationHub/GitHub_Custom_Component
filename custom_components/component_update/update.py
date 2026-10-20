@@ -1,4 +1,4 @@
-"""Update entity for a custom integration tracked by GPM."""
+"""Update entity for a custom integration tracked by Component Update."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, UPDATE_MODE_AUTOMATIC
-from .coordinator import GPMCoordinator
-from .entity import GPMEntity
+from .coordinator import ComponentUpdateCoordinator
+from .entity import ComponentUpdateEntity
 
 
 async def async_setup_entry(
@@ -19,10 +19,10 @@ async def async_setup_entry(
 ) -> None:
     """Create the update entity for this folder."""
 
-    async_add_entities([GPMUpdateEntity(hass.data[DOMAIN][entry.entry_id])])
+    async_add_entities([ComponentRepositoryUpdateEntity(hass.data[DOMAIN][entry.entry_id])])
 
 
-class GPMUpdateEntity(GPMEntity, UpdateEntity):
+class ComponentRepositoryUpdateEntity(ComponentUpdateEntity, UpdateEntity):
     """Show the installed and remote versions and install on request."""
 
     _attr_translation_key = "repository"
@@ -32,7 +32,7 @@ class GPMUpdateEntity(GPMEntity, UpdateEntity):
         | UpdateEntityFeature.RELEASE_NOTES
     )
 
-    def __init__(self, coordinator: GPMCoordinator) -> None:
+    def __init__(self, coordinator: ComponentUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.entry.entry_id}_update"
 

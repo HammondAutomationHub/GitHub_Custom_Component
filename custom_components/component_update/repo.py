@@ -102,8 +102,8 @@ def _clean_branch(branch: str | None) -> str | None:
 def folder_name_error(folder: str) -> str | None:
     """Return an error message when a folder name is not safe to write to."""
 
-    if folder == "gpm":
-        return "GPM will not update its own folder."
+    if folder == "component_update":
+        return "Component Update will not update its own folder."
     if not _FOLDER.match(folder):
         return "Integration folder names must be letters, numbers, and underscores."
     return None

@@ -11,8 +11,8 @@ import aiohttp
 from aiohttp import web
 import pytest
 
-from custom_components.gpm.const import UPDATE_MODE_AUTOMATIC, UPDATE_MODE_MANUAL
-from custom_components.gpm.errors import (
+from custom_components.component_update.const import UPDATE_MODE_AUTOMATIC, UPDATE_MODE_MANUAL
+from custom_components.component_update.errors import (
     ArchiveError,
     BranchNotFound,
     InvalidAuth,
@@ -20,10 +20,10 @@ from custom_components.gpm.errors import (
     RateLimited,
     RepoNotFound,
 )
-from custom_components.gpm.github_client import GitHubClient
-from custom_components.gpm.installer import install_archive
-from custom_components.gpm.updater import evaluate_update
-from custom_components.gpm.validate import validate_repository
+from custom_components.component_update.github_client import GitHubClient
+from custom_components.component_update.installer import install_archive
+from custom_components.component_update.updater import evaluate_update
+from custom_components.component_update.validate import validate_repository
 
 TOKEN = "ghp_test_token_do_not_log"
 
@@ -172,7 +172,7 @@ async def test_missing_branch_is_reported(github) -> None:
 async def test_validate_repository_against_the_fake_api(github, monkeypatch) -> None:
     state, base = github
     monkeypatch.setattr(
-        "custom_components.gpm.validate.GitHubClient",
+        "custom_components.component_update.validate.GitHubClient",
         lambda session, token: GitHubClient(session, token, api_base=base),
     )
     async with open_session() as session:
