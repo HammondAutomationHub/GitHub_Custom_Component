@@ -11,6 +11,14 @@
       },
       "reinstall": {
         "default": "mdi:download"
+      },
+      "install_version": {
+        "default": "mdi:backup-restore"
+      }
+    },
+    "select": {
+      "version": {
+        "default": "mdi:source-commit"
       }
     }
   }

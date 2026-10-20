@@ -10,7 +10,7 @@ from urllib.parse import quote, urljoin, urlparse
 
 import aiohttp
 
-from .const import GITHUB_API, MAX_DOWNLOAD_BYTES, USER_AGENT
+from .const import GITHUB_API, HISTORY_LIMIT, MAX_DOWNLOAD_BYTES, USER_AGENT
 from .errors import (
     ArchiveError,
     BranchNotFound,
@@ -21,6 +21,7 @@ from .errors import (
     RateLimited,
     RepoNotFound,
 )
+from .history import HistoryRef, build_history
 
 _API_TIMEOUT = aiohttp.ClientTimeout(total=30)
 _DOWNLOAD_TIMEOUT = aiohttp.ClientTimeout(total=180)
@@ -102,6 +103,18 @@ class GitHubClient:
         if not sha:
             raise CannotConnect("GitHub did not return a commit.")
         return CommitInfo(sha=sha, message=message[:4000])
+
+    async def list_history(self, owner: str, repo: str, branch: str) -> list[HistoryRef]:
+        """Return recent tags and commits that can be installed."""
+
+        tags = await self._get_list(
+            f"{self._api_base}/repos/{_seg(owner)}/{_seg(repo)}/tags?per_page={HISTORY_LIMIT}"
+        )
+        commits = await self._get_list(
+            f"{self._api_base}/repos/{_seg(owner)}/{_seg(repo)}/commits"
+            f"?sha={_seg(branch)}&per_page={HISTORY_LIMIT}"
+        )
+        return build_history(tags=tags, commits=commits)
 
     async def get_manifest(
         self, owner: str, repo: str, ref: str, folder: str
@@ -187,6 +200,21 @@ class GitHubClient:
         return headers
 
     async def _get_json(self, url: str) -> dict:
+        data = await self._request_json(url)
+        if not isinstance(data, dict):
+            raise CannotConnect("GitHub returned an unexpected response.")
+        return data
+
+    async def _get_list(self, url: str) -> list:
+        try:
+            data = await self._request_json(url)
+        except _NotFound:
+            return []
+        if not isinstance(data, list):
+            return []
+        return data
+
+    async def _request_json(self, url: str) -> dict | list:
         try:
             async with self._session.get(
                 url, headers=self._headers(include_auth=True), timeout=_API_TIMEOUT
@@ -197,7 +225,7 @@ class GitHubClient:
             raise
         except (aiohttp.ClientError, ValueError) as err:
             raise CannotConnect("Could not reach GitHub.") from err
-        if not isinstance(data, dict):
+        if not isinstance(data, (dict, list)):
             raise CannotConnect("GitHub returned an unexpected response.")
         return data
 

@@ -111,7 +111,8 @@ def test_redaction_and_attributes_do_not_carry_a_token() -> None:
     )
     assert "token" not in attrs
     stored = persisted_state(bootstrapped=True, installed_sha="abc")
-    assert set(stored) == {"bootstrapped", "installed_sha"}
+    assert set(stored) == {"bootstrapped", "installed_sha", "pinned"}
+    assert stored["pinned"] is False
 
 
 def test_check_intervals_match_the_ui_strings() -> None:

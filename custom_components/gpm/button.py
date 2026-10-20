@@ -5,6 +5,7 @@ from __future__ import annotations
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -24,6 +25,7 @@ async def async_setup_entry(
         [
             GPMCheckButton(coordinator),
             GPMReinstallButton(coordinator),
+            GPMInstallVersionButton(coordinator),
         ]
     )
 
@@ -60,3 +62,23 @@ class GPMReinstallButton(GPMEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         await self.coordinator.async_install(force=True)
+
+
+class GPMInstallVersionButton(GPMEntity, ButtonEntity):
+    """Install the tag or commit chosen in the version dropdown."""
+
+    _attr_translation_key = "install_version"
+
+    def __init__(self, coordinator: GPMCoordinator) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.entry.entry_id}_install_version"
+
+    @property
+    def available(self) -> bool:
+        return self.coordinator.selected_ref is not None and not self.coordinator.installing
+
+    async def async_press(self) -> None:
+        ref = self.coordinator.selected_ref
+        if not ref:
+            raise HomeAssistantError("Choose a version before installing it.")
+        await self.coordinator.async_install_ref(ref)

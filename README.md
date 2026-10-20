@@ -108,10 +108,19 @@ GPM adds one device per folder:
 
 The Update entity's release notes are the remote commit message, and the release URL opens that commit on GitHub.
 
+## Roll back
+
+On the GPM device, open **Version** and choose a tag or a recent commit, then press **Install version**. GPM replaces the folder in `custom_components` with that revision and leaves it there. Automatic mode will not move that folder forward again until you install the latest commit from the Update entity.
+
+You can also call the `gpm.rollback` service with `folder` and `version`. `version` is a tag name, such as `v1.2.0`, or a commit SHA.
+
+Restart Home Assistant after a rollback, the same as after any other install.
+
 You can also call these services:
 
 - `gpm.check_updates` — optional `folder`. Omit it to check every GPM entry.
 - `gpm.install_update` — `folder` is required.
+- `gpm.rollback` — `folder` and `version` are required. Installs that tag or commit and keeps it there.
 
 Manual mode still checks once when Home Assistant starts, so the Update entity has a version to show. After that it checks only when you press the button, call the service, or a schedule is set.
 

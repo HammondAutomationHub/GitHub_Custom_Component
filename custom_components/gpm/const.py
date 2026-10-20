@@ -35,6 +35,11 @@ CHECK_INTERVALS: dict[str, timedelta | None] = {
 
 SERVICE_CHECK = "check_updates"
 SERVICE_INSTALL = "install_update"
+SERVICE_ROLLBACK = "rollback"
+
+CONF_VERSION = "version"
+VERSION_PROMPT = "Choose a version"
+HISTORY_LIMIT = 15
 
 DEFAULT_BRANCH = "main"
 GITHUB_API = "https://api.github.com"

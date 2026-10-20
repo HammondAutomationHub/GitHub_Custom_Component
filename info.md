@@ -15,6 +15,8 @@ The first check never installs. After that, manual mode waits for you to press *
 
 One reason to use GPM is a repository that started public and is now private. Leave the folder in `custom_components`, make the GitHub repo private, and point GPM at it with a read-only token.
 
+To roll back, choose a tag or commit under **Version**, then press **Install version**. That folder stays on the revision you picked until you install the latest commit.
+
 If HACS also updates that integration, ignore it in HACS so the two do not overwrite each other.
 {% endif %}
 

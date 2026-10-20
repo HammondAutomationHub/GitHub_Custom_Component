@@ -9,3 +9,13 @@ install_update:
       required: true
       selector:
         text:
+rollback:
+  fields:
+    folder:
+      required: true
+      selector:
+        text:
+    version:
+      required: true
+      selector:
+        text:

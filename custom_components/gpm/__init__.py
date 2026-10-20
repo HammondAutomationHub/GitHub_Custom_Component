@@ -12,16 +12,24 @@ from homeassistant.helpers import config_validation as cv
 
 from .const import (
     CONF_FOLDER,
+    CONF_VERSION,
     DOMAIN,
     SERVICE_CHECK,
     SERVICE_INSTALL,
+    SERVICE_ROLLBACK,
 )
 from .coordinator import GPMCoordinator
 
-PLATFORMS: list[Platform] = [Platform.UPDATE, Platform.BUTTON]
+PLATFORMS: list[Platform] = [Platform.UPDATE, Platform.BUTTON, Platform.SELECT]
 
 CHECK_SCHEMA = vol.Schema({vol.Optional(CONF_FOLDER): cv.string})
 INSTALL_SCHEMA = vol.Schema({vol.Required(CONF_FOLDER): cv.string})
+ROLLBACK_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_FOLDER): cv.string,
+        vol.Required(CONF_VERSION): cv.string,
+    }
+)
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
@@ -47,9 +55,19 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
             raise ServiceValidationError(f"No GPM entry is configured for {folder}.")
         await matches[0].async_install()
 
+    async def handle_rollback(call: ServiceCall) -> None:
+        folder = call.data[CONF_FOLDER]
+        matches = await _coordinators(folder)
+        if not matches:
+            raise ServiceValidationError(f"No GPM entry is configured for {folder}.")
+        await matches[0].async_install_ref(call.data[CONF_VERSION])
+
     hass.services.async_register(DOMAIN, SERVICE_CHECK, handle_check, schema=CHECK_SCHEMA)
     hass.services.async_register(
         DOMAIN, SERVICE_INSTALL, handle_install, schema=INSTALL_SCHEMA
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_ROLLBACK, handle_rollback, schema=ROLLBACK_SCHEMA
     )
     return True
 

@@ -71,3 +71,18 @@ def test_matching_commit_is_not_an_update() -> None:
     )
     assert decision.should_install is False
     assert decision.update_available is False
+
+
+def test_pinned_folder_is_not_replaced_automatically() -> None:
+    decision = decide_check(
+        previous_sha="a" * 40,
+        previous_bootstrapped=True,
+        remote_sha=REMOTE,
+        local_version="1.0.0",
+        remote_version="1.1.0",
+        update_mode="automatic",
+        pinned=True,
+    )
+    assert decision.should_install is False
+    assert decision.update_available is True
+    assert decision.installed_sha == "a" * 40

@@ -105,6 +105,14 @@
       },
       "reinstall": {
         "name": "Reinstall"
+      },
+      "install_version": {
+        "name": "Install version"
+      }
+    },
+    "select": {
+      "version": {
+        "name": "Version"
       }
     }
   },
@@ -132,6 +140,20 @@
         "folder": {
           "name": "Folder",
           "description": "Integration folder configured in GPM."
+        }
+      }
+    },
+    "rollback": {
+      "name": "Roll back",
+      "description": "Install an older tag or commit for one configured integration and keep it there.",
+      "fields": {
+        "folder": {
+          "name": "Folder",
+          "description": "Integration folder configured in GPM."
+        },
+        "version": {
+          "name": "Version",
+          "description": "Tag name or commit SHA to install."
         }
       }
     }

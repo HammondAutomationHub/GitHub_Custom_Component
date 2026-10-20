@@ -28,13 +28,21 @@ from .const import (
     NOTIFICATION_RESTART,
     STORAGE_VERSION,
     UPDATE_MODE_AUTOMATIC,
+    VERSION_PROMPT,
 )
 from .errors import GPMError, InvalidAuth
 from .github_client import GitHubClient
+from .history import HistoryRef
 from .installer import install_archive, read_local_version
 from .policy import persisted_state
 from .repo import normalize_branch, split_slug
-from .updater import Evaluation, evaluate_update, in_sync_displays, status_attributes
+from .updater import (
+    Evaluation,
+    evaluate_update,
+    in_sync_displays,
+    status_attributes,
+    version_displays,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -85,6 +93,9 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
         self._persisted: dict = {}
         self._io = asyncio.Lock()
         self.installing = False
+        self._history: list[HistoryRef] = []
+        self._selected_label = VERSION_PROMPT
+        self._selected_ref: str | None = None
 
     @property
     def repo(self) -> str:
@@ -109,6 +120,45 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
         """Return the configured check interval key."""
 
         return self._interval_key(self.entry)
+
+    @property
+    def pinned(self) -> bool:
+        """Return whether automatic updates are held at a chosen commit."""
+
+        return bool(self._persisted.get("pinned"))
+
+    @property
+    def version_labels(self) -> list[str]:
+        """Return the version dropdown, including the prompt."""
+
+        return [VERSION_PROMPT, *[item.label for item in self._history]]
+
+    @property
+    def selected_version_label(self) -> str:
+        """Return the label currently chosen in the version dropdown."""
+
+        return self._selected_label
+
+    @property
+    def selected_ref(self) -> str | None:
+        """Return the tag or commit chosen for install, if any."""
+
+        return self._selected_ref
+
+    def select_version(self, label: str) -> None:
+        """Remember a version dropdown choice. Does not install it."""
+
+        if label == VERSION_PROMPT:
+            self._selected_ref = None
+            self._selected_label = VERSION_PROMPT
+            self.async_update_listeners()
+            return
+        match = next((item for item in self._history if item.label == label), None)
+        if match is None:
+            raise KeyError(label)
+        self._selected_ref = match.ref
+        self._selected_label = match.label
+        self.async_update_listeners()
 
     async def async_load(self) -> None:
         """Load the last installed commit from disk."""
@@ -141,7 +191,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             version = await self._apply(status.remote_sha)
             installed, latest = in_sync_displays(version)
             self._persisted = persisted_state(
-                bootstrapped=True, installed_sha=status.remote_sha
+                bootstrapped=True, installed_sha=status.remote_sha, pinned=False
             )
             await self._store.async_save(self._persisted)
             self._notify_restart()
@@ -178,6 +228,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             branch=self.branch,
             installed_sha=status.installed_sha if status else None,
             remote_sha=status.remote_sha if status else None,
+            pinned=self.pinned,
         )
 
     async def _async_update_data(self) -> GPMStatus:
@@ -203,13 +254,16 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
             bootstrapped=bool(self._persisted.get("bootstrapped")),
             installed_sha=self._persisted.get("installed_sha"),
             update_mode=self.update_mode,
+            pinned=self.pinned,
         )
+        await self._refresh_history()
         if not apply_policy:
             return self._status_from(evaluation, installed_sha=evaluation.decision.installed_sha)
 
         self._persisted = persisted_state(
             bootstrapped=True,
             installed_sha=evaluation.decision.installed_sha,
+            pinned=self.pinned,
         )
         await self._store.async_save(self._persisted)
 
@@ -228,7 +282,7 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                 self.installing = False
                 self.async_update_listeners()
             self._persisted = persisted_state(
-                bootstrapped=True, installed_sha=evaluation.remote_sha
+                bootstrapped=True, installed_sha=evaluation.remote_sha, pinned=False
             )
             await self._store.async_save(self._persisted)
             self._notify_restart()
@@ -252,6 +306,99 @@ class GPMCoordinator(DataUpdateCoordinator[GPMStatus]):
                 evaluation.latest_display,
             )
         return self._status_from(evaluation, installed_sha=evaluation.decision.installed_sha)
+
+    async def async_install_ref(self, ref: str) -> None:
+        """Install a tag or commit and hold automatic updates on that revision."""
+
+        async with self._io:
+            await self._install_ref_locked(ref)
+
+    async def _install_ref_locked(self, ref: str) -> None:
+        """Install a specific ref while the coordinator I/O lock is held."""
+
+        if self.installing:
+            return
+        self.installing = True
+        self.async_update_listeners()
+        try:
+            client = self._client()
+            commit = await client.get_commit(self.owner, self.repo_name, ref)
+            await client.get_manifest(self.owner, self.repo_name, commit.sha, self.folder)
+            version = await self._apply(commit.sha)
+            if self.data and self.data.remote_sha:
+                tip = self.data.remote_sha
+                remote_version = self.data.remote_version
+                forward_message = self.data.commit_message
+            else:
+                tip_commit = await client.get_commit(self.owner, self.repo_name, self.branch)
+                tip = tip_commit.sha
+                forward_message = tip_commit.message
+                if tip == commit.sha:
+                    remote_version = version
+                else:
+                    tip_manifest = await client.get_manifest(
+                        self.owner, self.repo_name, tip, self.folder
+                    )
+                    remote_version = tip_manifest.version
+            pinned = commit.sha != tip
+            self._persisted = persisted_state(
+                bootstrapped=True, installed_sha=commit.sha, pinned=pinned
+            )
+            await self._store.async_save(self._persisted)
+            self._notify_restart()
+            if pinned:
+                installed_display, latest_display = version_displays(
+                    local_version=version,
+                    local_sha=commit.sha,
+                    remote_version=remote_version,
+                    remote_sha=tip,
+                )
+            else:
+                installed_display, latest_display = in_sync_displays(version)
+            self.async_set_updated_data(
+                GPMStatus(
+                    installed_sha=commit.sha,
+                    remote_sha=tip,
+                    installed_display=installed_display,
+                    latest_display=latest_display,
+                    commit_message=forward_message,
+                    update_available=pinned,
+                    local_version=version,
+                    remote_version=remote_version if pinned else version,
+                )
+            )
+            _LOGGER.info(
+                "Installed %s %s at %s",
+                self.folder,
+                version,
+                commit.sha[:7],
+            )
+        finally:
+            self.installing = False
+            self.async_update_listeners()
+
+    async def _refresh_history(self) -> None:
+        """Load tags and recent commits for the version dropdown."""
+
+        try:
+            self._history = await self._client().list_history(
+                self.owner, self.repo_name, self.branch
+            )
+        except GPMError:
+            _LOGGER.debug("Could not list versions for %s", self.folder, exc_info=True)
+            self._history = []
+        self._keep_selection()
+
+    def _keep_selection(self) -> None:
+        if self._selected_ref is None:
+            self._selected_label = VERSION_PROMPT
+            return
+        match = next((item for item in self._history if item.ref == self._selected_ref), None)
+        if match is None:
+            self._selected_ref = None
+            self._selected_label = VERSION_PROMPT
+            return
+        self._selected_label = match.label
 
     def _status_from(self, evaluation: Evaluation, *, installed_sha: str | None) -> GPMStatus:
         return GPMStatus(
