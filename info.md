@@ -13,6 +13,8 @@ Uses the existing [GPM install script](https://github.com/tomasbedrich/gpm/blob/
 
 The first check never installs. After that, manual mode waits for you to press **Install** on the Update entity. Automatic mode downloads new commits on the schedule you picked. Restart Home Assistant after an install.
 
+One reason to use GPM is a repository that started public and is now private. Leave the folder in `custom_components`, make the GitHub repo private, and point GPM at it with a read-only token.
+
 If HACS also updates that integration, ignore it in HACS so the two do not overwrite each other.
 {% endif %}
 

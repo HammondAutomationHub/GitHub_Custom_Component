@@ -10,7 +10,21 @@ The script finds Home Assistant, installs GPM, and writes a `gpm:` block into `c
 - Provide a token for that repository
 - Choose manual updates, or an automatic check on a schedule (hourly, every 6 or 12 hours, daily, or weekly)
 
-GPM itself can be installed from HACS or manually. The integrations it updates can also be installed either way. Both end up in `custom_components`.
+GPM itself can be installed from HACS or manually. The integrations it updates can also be installed either way. Both end up in `custom_components`. GPM manages the folder you select there.
+
+## FAQ
+
+### I started with a public GitHub repo and want to make it private
+
+That is a purpose of this tool. The integration can stay in `custom_components/<folder>`. GPM takes over updates after the GitHub repository is private.
+
+1. Leave the installed folder where it is.
+2. On GitHub, change that repository from public to private.
+3. Create a fine-grained token that can read the private repository. Set **Contents** to **Read-only**.
+4. Add GPM, choose that folder, enter the same repository and branch, and paste the token.
+5. If HACS was updating the public repository, ignore or remove it in HACS. HACS will no longer be able to see a private repo it is not allowed to read, and the two updaters would otherwise overwrite the same folder.
+
+GPM does not change the repository's visibility. You do that on GitHub. The first check does not reinstall when the local version already matches. Later commits on the private repo are what GPM offers to install.
 
 ## What you can configure
 
