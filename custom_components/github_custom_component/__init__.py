@@ -10,6 +10,7 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 
+from .card import async_register_card
 from .const import (
     CONF_FOLDER,
     CONF_VERSION,
@@ -42,6 +43,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Register services once."""
 
     hass.data.setdefault(DOMAIN, {})
+    await async_register_card(hass)
 
     async def _coordinators(folder: str | None) -> list[GitHubCustomComponentCoordinator]:
         coordinators = list(hass.data[DOMAIN].values())
