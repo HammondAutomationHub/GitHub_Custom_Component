@@ -29,6 +29,12 @@
     "sensor": {
       "status": {
         "default": "mdi:information-outline"
+      },
+      "installed_version": {
+        "default": "mdi:tag-outline"
+      },
+      "version_to_deploy": {
+        "default": "mdi:source-branch"
       }
     }
   }

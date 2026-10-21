@@ -82,6 +82,8 @@ GitHub - Custom_Component adds one device per folder.
 | --- | --- |
 | Update | Shows the installed and remote versions, including a new commit that did not change the manifest version. After a rollback, the title says updates are paused. **Install** downloads the latest commit on the branch and turns **Updates paused** off. |
 | Status | States the last check: up to date, an update is available, updates are paused, or the check failed. |
+| Installed version | The version in the folder now. |
+| Version to deploy | The version the last check found on the branch. **Install** deploys that version. |
 | Check for updates | Checks GitHub now. A failed check shows the error. The result is on **Status** and on the update card. |
 | Rollback version | Lists tags, then recent commits. It starts at "Choose a version to roll back". Choosing one does not install it. |
 | Install version and pause | Installs the chosen tag or commit and turns **Updates paused** on. |

@@ -123,6 +123,12 @@
     "sensor": {
       "status": {
         "name": "Status"
+      },
+      "installed_version": {
+        "name": "Installed version"
+      },
+      "version_to_deploy": {
+        "name": "Version to deploy"
       }
     }
   },

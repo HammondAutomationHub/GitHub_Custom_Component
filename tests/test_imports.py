@@ -18,4 +18,6 @@ def test_integration_modules_import() -> None:
     assert select.GitHubCustomComponentVersionSelect
     assert switch.GitHubCustomComponentPauseSwitch
     assert sensor.GitHubCustomComponentStatusSensor
+    assert sensor.GitHubCustomComponentInstalledVersionSensor
+    assert sensor.GitHubCustomComponentDeployVersionSensor
     assert diagnostics.async_get_config_entry_diagnostics
