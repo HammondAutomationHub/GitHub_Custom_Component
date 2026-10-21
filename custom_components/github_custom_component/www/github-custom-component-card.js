@@ -57,12 +57,23 @@ function entityFor(hass, deviceId, row) {
   return match.entity_id;
 }
 
-function createRow(entityId) {
+async function createRow(entityId) {
+  if (window.loadCardHelpers) {
+    const helpers = await window.loadCardHelpers();
+    if (helpers && helpers.createRowElement) {
+      return helpers.createRowElement({ entity: entityId });
+    }
+  }
   const domain = entityId.split(".", 1)[0];
   const preferred = ROW_TAG[domain];
   const tag = preferred && customElements.get(preferred) ? preferred : "hui-generic-entity-row";
   const row = document.createElement(tag);
-  row.setConfig({ entity: entityId });
+  const config = { entity: entityId };
+  if (typeof row.setConfig === "function") {
+    row.setConfig(config);
+  } else {
+    row.config = config;
+  }
   return row;
 }
 
@@ -106,7 +117,8 @@ class GitHubCustomComponentCard extends HTMLElement {
     return 8;
   }
 
-  _paint() {
+  async _paint() {
+    const generation = (this._paintGeneration = (this._paintGeneration || 0) + 1);
     const hass = this._hass;
     if (!this._card) {
       this._card = document.createElement("ha-card");
@@ -130,12 +142,27 @@ class GitHubCustomComponentCard extends HTMLElement {
       this._body.append(note("This folder has no controls yet. Restart Home Assistant after updating."));
       return;
     }
-    this._ids.forEach((entityId) => {
-      const row = createRow(entityId);
-      row.hass = hass;
-      this._rows.push(row);
-      this._body.append(row);
-    });
+    const rows = [];
+    for (const entityId of this._ids) {
+      try {
+        const row = await createRow(entityId);
+        if (generation !== this._paintGeneration) {
+          return;
+        }
+        row.hass = this._hass;
+        rows.push(row);
+      } catch (error) {
+        // One row must not wipe the rest of the card.
+      }
+    }
+    if (generation !== this._paintGeneration) {
+      return;
+    }
+    this._rows = rows;
+    this._body.replaceChildren(...rows);
+    if (!rows.length) {
+      this._body.append(note("This folder has no controls yet. Restart Home Assistant after updating."));
+    }
   }
 }
 
