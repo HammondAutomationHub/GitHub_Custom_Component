@@ -90,7 +90,7 @@ GitHub - Custom_Component adds one device per folder.
 | Reinstall | While updates are paused, downloads that same revision again. Otherwise downloads the latest commit, even when the versions already match. |
 | Updates paused | Turns on after a rollback. While it is on, automatic mode leaves the folder on the installed revision. Turn it off to follow the branch again. |
 
-The dashboard card **GitHub - Custom_Component** is included. On any dashboard, choose **Edit dashboard → Add card** and pick that card, then choose the folder. The card shows Update, Check for updates, Rollback version, Install version and pause, Reinstall, Updates paused, and Status. Add the card again on each page where you want that folder.
+The dashboard card **GitHub - Custom_Component** is included. After a Home Assistant restart, reload the browser. On any dashboard, choose **Edit dashboard → Add card**, search for **GitHub - Custom_Component**, then choose the folder. The card shows Update, Check for updates, Rollback version, Install version and pause, Reinstall, Updates paused, and Status. Add the card again on each page where you want that folder.
 
 The Update entity's release notes are the commit message. The release URL opens that commit on GitHub. While updates are paused, the notes also say that automatic checks will leave the folder where it is.
 

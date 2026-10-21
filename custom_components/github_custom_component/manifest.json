@@ -3,7 +3,7 @@
   "name": "GitHub - Custom_Component",
   "codeowners": ["@HammondAutomationHub"],
   "config_flow": true,
-  "dependencies": ["frontend"],
+  "dependencies": ["frontend", "lovelace"],
   "documentation": "https://github.com/HammondAutomationHub/GitHub_Custom_Component",
   "integration_type": "service",
   "iot_class": "cloud_polling",

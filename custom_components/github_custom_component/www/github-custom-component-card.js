@@ -208,14 +208,43 @@ function note(text) {
   return paragraph;
 }
 
-customElements.define("github-custom-component-card", GitHubCustomComponentCard);
-customElements.define("github-custom-component-card-editor", GitHubCustomComponentCardEditor);
+function registerCard() {
+  if (!customElements.get("github-custom-component-card")) {
+    customElements.define("github-custom-component-card", GitHubCustomComponentCard);
+    customElements.define(
+      "github-custom-component-card-editor",
+      GitHubCustomComponentCardEditor
+    );
+  }
+  window.customCards = window.customCards || [];
+  if (!window.customCards.some((card) => card.type === "github-custom-component-card")) {
+    window.customCards.push({
+      type: "github-custom-component-card",
+      name: "GitHub - Custom_Component",
+      description:
+        "Update, check, rollback, pause, and status for one folder. Add it to any dashboard page.",
+      preview: false,
+    });
+  }
+}
 
-window.customCards = window.customCards || [];
-window.customCards.push({
-  type: "github-custom-component-card",
-  name: "GitHub - Custom_Component",
-  description:
-    "Update, check, rollback, pause, and status for one folder. Add it to any dashboard page.",
-  preview: true,
-});
+function whenFrontendReady(done) {
+  if (window.loadCardHelpers) {
+    window.loadCardHelpers().then(done).catch(done);
+    return;
+  }
+  let tries = 0;
+  const timer = setInterval(() => {
+    tries += 1;
+    if (window.loadCardHelpers || tries > 100) {
+      clearInterval(timer);
+      if (window.loadCardHelpers) {
+        window.loadCardHelpers().then(done).catch(done);
+      } else {
+        done();
+      }
+    }
+  }, 50);
+}
+
+whenFrontendReady(registerCard);
