@@ -31,4 +31,4 @@ def test_integration_modules_import() -> None:
     ).read_text(encoding="utf-8")
     for key in ("repository", "check", "version", "install_version", "reinstall", "pause", "status"):
         assert key in script
-    assert "loadCardHelpers" in script
+    assert "getEntitySuggestion" in script

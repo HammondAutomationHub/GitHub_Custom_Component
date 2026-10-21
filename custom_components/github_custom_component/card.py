@@ -16,13 +16,22 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-CARD_URL = f"/{DOMAIN}/github-custom-component-card.js"
+CARD_FILENAME = "github-custom-component-card.js"
+CARD_URL = f"/{DOMAIN}/{CARD_FILENAME}"
+LOCAL_URL = f"/local/{DOMAIN}/{CARD_FILENAME}"
 _REGISTERED = f"{DOMAIN}_card_registered"
 
 
-def _versioned_url(path: Path) -> str:
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
-    return f"{CARD_URL}?v={digest}"
+def _publish_card(source: Path, www_dir: Path) -> str:
+    """Copy the card into config/www and return a cache-busted /local URL."""
+
+    www_dir.mkdir(parents=True, exist_ok=True)
+    data = source.read_bytes()
+    destination = www_dir / CARD_FILENAME
+    if not destination.is_file() or destination.read_bytes() != data:
+        destination.write_bytes(data)
+    digest = hashlib.sha256(data).hexdigest()[:12]
+    return f"{LOCAL_URL}?v={digest}"
 
 
 async def async_register_card(hass: HomeAssistant) -> None:
@@ -30,11 +39,31 @@ async def async_register_card(hass: HomeAssistant) -> None:
 
     if hass.data.get(_REGISTERED):
         return
-    path = Path(__file__).parent / "www" / "github-custom-component-card.js"
-    await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(path), False)])
-    url = await hass.async_add_executor_job(_versioned_url, path)
-    if not await _register_lovelace_resource(hass, url):
+    source = Path(__file__).parent / "www" / CARD_FILENAME
+    try:
+        await hass.http.async_register_static_paths(
+            [StaticPathConfig(CARD_URL, str(source), False)]
+        )
+    except Exception:
+        _LOGGER.exception("Could not publish the dashboard card at %s", CARD_URL)
+    try:
+        url = await hass.async_add_executor_job(
+            _publish_card, source, Path(hass.config.path("www", DOMAIN))
+        )
+    except Exception:
+        _LOGGER.exception("Could not copy the dashboard card into config/www")
+        url = CARD_URL
+    try:
         add_extra_js_url(hass, url)
+    except Exception:
+        _LOGGER.exception("Could not attach the dashboard card to the frontend")
+    try:
+        stored = await _register_lovelace_resource(hass, url)
+    except Exception:
+        _LOGGER.exception("Could not store the dashboard card resource")
+        stored = False
+    if stored:
+        _LOGGER.info("Dashboard card registered at %s", url)
     hass.data[_REGISTERED] = True
 
 
@@ -51,20 +80,18 @@ async def _register_lovelace_resource(hass: HomeAssistant, url: str) -> bool:
         await collection.async_load()
         collection.loaded = True
 
-    base = CARD_URL
+    base = LOCAL_URL
     existing = next(
         (
             item
             for item in collection.async_items()
-            if str(item.get("url", "")).split("?", 1)[0] == base
+            if str(item.get("url", "")).split("?", 1)[0] in {base, CARD_URL}
         ),
         None,
     )
     if existing is None:
         await collection.async_create_item({"res_type": "module", "url": url})
-        _LOGGER.debug("Registered dashboard card resource %s", url)
         return True
     if existing.get("url") != url:
         await collection.async_update_item(existing["id"], {"url": url})
-        _LOGGER.debug("Updated dashboard card resource %s", url)
     return True

@@ -208,6 +208,18 @@ function note(text) {
   return paragraph;
 }
 
+function deviceForEntity(hass, entityId) {
+  const entry = hass && hass.entities && hass.entities[entityId];
+  const platform = entry && entry.platform;
+  const ours =
+    platform === "github_custom_component" ||
+    (typeof entityId === "string" && entityId.includes("github_custom_component"));
+  if (!ours || !entry || !entry.device_id) {
+    return null;
+  }
+  return entry.device_id;
+}
+
 function registerCard() {
   if (!customElements.get("github-custom-component-card")) {
     customElements.define("github-custom-component-card", GitHubCustomComponentCard);
@@ -224,27 +236,20 @@ function registerCard() {
       description:
         "Update, check, rollback, pause, and status for one folder. Add it to any dashboard page.",
       preview: false,
+      getEntitySuggestion: (hass, entityId) => {
+        const device = deviceForEntity(hass, entityId);
+        if (!device) {
+          return null;
+        }
+        return {
+          config: {
+            type: "custom:github-custom-component-card",
+            device,
+          },
+        };
+      },
     });
   }
 }
 
-function whenFrontendReady(done) {
-  if (window.loadCardHelpers) {
-    window.loadCardHelpers().then(done).catch(done);
-    return;
-  }
-  let tries = 0;
-  const timer = setInterval(() => {
-    tries += 1;
-    if (window.loadCardHelpers || tries > 100) {
-      clearInterval(timer);
-      if (window.loadCardHelpers) {
-        window.loadCardHelpers().then(done).catch(done);
-      } else {
-        done();
-      }
-    }
-  }, 50);
-}
-
-whenFrontendReady(registerCard);
+registerCard();
